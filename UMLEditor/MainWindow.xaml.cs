@@ -24,5 +24,15 @@ namespace UMLEditort
         {
             InitializeComponent();
         }
+
+        private void ClassButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Mode = _vm.Mode == Modes.Class ? Modes.Undefined : Modes.Class;
+        }
+
+        private void UseCaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Mode = _vm.Mode == Modes.UseCase ? Modes.Undefined : Modes.UseCase;
+        }
     }
 }
