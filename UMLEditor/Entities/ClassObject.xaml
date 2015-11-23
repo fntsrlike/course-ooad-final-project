@@ -16,7 +16,7 @@
             </Grid.RowDefinitions>
             <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Red">
                 <DockPanel>
-                    <TextBlock x:Name="ObjectName" TextWrapping="Wrap" Text="TextBlock" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ObjectNameText" TextWrapping="Wrap" Text="TextBlock" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </DockPanel>
             </Border>
             <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="Red"/>

@@ -16,17 +16,17 @@ using System.Windows.Shapes;
 namespace UMLEditort.Entities
 {
     /// <summary>
-    /// ClassObject.xaml 的互動邏輯
+    /// UseCaseObject.xaml 的互動邏輯
     /// </summary>
-    public partial class ClassObject : UserControl, IBaseObject
+    public partial class UseCaseObject : UserControl, IBaseObject
     {
-        public ClassObject()
+        public UseCaseObject()
         {
             InitializeComponent();
         }
 
-        public ClassObject(string objectName)
-        {            
+        public UseCaseObject(string objectName)
+        {
             InitializeComponent();
             ObjectName = objectName;
         }
@@ -35,13 +35,13 @@ namespace UMLEditort.Entities
         {
             get
             {
-                return ObjectNameText.Text; 
-                
+                return ObjectNameText.Text;
+
             }
             set
             {
                 ObjectNameText.Text = value;
-                
+
             }
         }
     }

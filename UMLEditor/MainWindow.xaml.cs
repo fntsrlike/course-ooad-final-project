@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using UMLEditort.Entities;
@@ -32,31 +33,29 @@ namespace UMLEditort
 
             if (_vm.Mode == Modes.Class)
             {
-                var rectangle = new ClassObject("ClassObject")
+                var baseObject = new ClassObject("Class Object")
                 {
                     Width = 100,
                     Height = 100
                 };
 
-                Canvas.SetLeft(rectangle, point.X);
-                Canvas.SetTop(rectangle, point.Y);
+                Canvas.SetLeft(baseObject, point.X);
+                Canvas.SetTop(baseObject, point.Y);
 
-                DiagramCanvas.Children.Add(rectangle);
+                DiagramCanvas.Children.Add(baseObject);
             }
             else if (_vm.Mode == Modes.UseCase)
             {
-                var rectangle = new Rectangle
+                var baseObject = new UseCaseObject("Use Case Object")
                 {
-                    Stroke = new SolidColorBrush(Colors.Red),
-                    Fill = new SolidColorBrush(Colors.Red),
-                    Width = 100,
+                    Width = 150,
                     Height = 100
                 };
 
-                Canvas.SetLeft(rectangle, point.X);
-                Canvas.SetTop(rectangle, point.Y);
+                Canvas.SetLeft(baseObject, point.X);
+                Canvas.SetTop(baseObject, point.Y);
 
-                DiagramCanvas.Children.Add(rectangle);
+                DiagramCanvas.Children.Add(baseObject);
             }
         }
     }
