@@ -7,6 +7,18 @@
         mc:Ignorable="d"
         Title="UMLEditor" Width="960" Height="720">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel  Grid.Row="0">
+            <Menu x:Name="Menu" DockPanel.Dock="Top">
+                <MenuItem Header="_File"></MenuItem>
+                <MenuItem Header="_Edit"></MenuItem>
+            </Menu>
+        </DockPanel>
         
+        <Grid Grid.Row="1">
+        </Grid>
     </Grid>
 </Window>
