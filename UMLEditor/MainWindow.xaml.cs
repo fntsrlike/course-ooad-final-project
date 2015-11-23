@@ -1,4 +1,7 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace UMLEditort
 {
@@ -20,6 +23,42 @@ namespace UMLEditort
         private void UseCaseButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.UseCase ? Modes.Undefined : Modes.UseCase;
+        }
+
+        private void DiagramCanvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var point = e.GetPosition(DiagramCanvas);
+
+            if (_vm.Mode == Modes.Class)
+            {
+                var rectangle = new Rectangle
+                {
+                    Stroke = new SolidColorBrush(Colors.Black),
+                    Fill = new SolidColorBrush(Colors.Black),
+                    Width = 100,
+                    Height = 100
+                };
+
+                Canvas.SetLeft(rectangle, point.X);
+                Canvas.SetTop(rectangle, point.Y);
+
+                DiagramCanvas.Children.Add(rectangle);
+            }
+            else if (_vm.Mode == Modes.UseCase)
+            {
+                var rectangle = new Rectangle
+                {
+                    Stroke = new SolidColorBrush(Colors.Red),
+                    Fill = new SolidColorBrush(Colors.Red),
+                    Width = 100,
+                    Height = 100
+                };
+
+                Canvas.SetLeft(rectangle, point.X);
+                Canvas.SetTop(rectangle, point.Y);
+
+                DiagramCanvas.Children.Add(rectangle);
+            }
         }
     }
 }
