@@ -53,7 +53,9 @@
                 </DockPanel>
             </Grid>
             <Grid Grid.Column="1">
-                <DockPanel/>
+                <DockPanel>
+                    <Canvas/>
+                </DockPanel>
             </Grid>
         </Grid>
     </Grid>
