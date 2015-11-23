@@ -50,10 +50,10 @@
                     <Button x:Name="CompositionButton" Content="Composition Line" ToolTip="Composition Line"/>
                 </DockPanel>
                 <DockPanel Grid.Row="4" Margin="10">
-                    <Button x:Name="ClassButton" Content="Class" ToolTip="Class" Click="ClassButton_Click" Background="{Binding ClassBtnColor}"/>
+                    <Button x:Name="ClassButton" Content="Class" ToolTip="Class" Click="ClassButton_Click" Foreground="{Binding ClassBtnForeColor}" Background="{Binding ClassBtnBackColor}"/>
                 </DockPanel>
                 <DockPanel Grid.Row="5" Margin="10">
-                    <Button x:Name="UseCaseButton" Content="Use Case" ToolTip="Use Case" Click="UseCaseButton_Click" Background="{Binding UseCaseBtnColor}"/>
+                    <Button x:Name="UseCaseButton" Content="Use Case" ToolTip="Use Case" Click="UseCaseButton_Click" Foreground="{Binding UseCaseBtnForeColor}" Background="{Binding UseCaseBtnBackColor}"/>
                 </DockPanel>
             </Grid>
             <Grid Grid.Column="1">

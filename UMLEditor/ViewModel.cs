@@ -19,14 +19,18 @@ namespace UMLEditort
             set
             {
                 _mode = value;
-                NotifyPropertyChanged("ClassBtnColor");
-                NotifyPropertyChanged("UseCaseBtnColor");
+                NotifyPropertyChanged("ClassBtnBackColor");
+                NotifyPropertyChanged("ClassBtnForeColor");
+                NotifyPropertyChanged("UseCaseBtnBackColor");
+                NotifyPropertyChanged("UseCaseBtnForeColor");
             }
             get { return _mode; }
         }
 
-        public SolidColorBrush ClassBtnColor => Mode == Modes.Class ? Brushes.Black : Brushes.White;
-        public SolidColorBrush UseCaseBtnColor => Mode == Modes.UseCase ? Brushes.Black : Brushes.White;
+        public SolidColorBrush ClassBtnBackColor => Mode == Modes.Class ? Brushes.Black : Brushes.White;
+        public SolidColorBrush ClassBtnForeColor => Mode == Modes.Class ? Brushes.White : Brushes.Black;
+        public SolidColorBrush UseCaseBtnBackColor => Mode == Modes.UseCase ? Brushes.Black : Brushes.White;
+        public SolidColorBrush UseCaseBtnForeColor => Mode == Modes.UseCase ? Brushes.White : Brushes.Black;
 
         public void NotifyPropertyChanged(string propName)
         {
