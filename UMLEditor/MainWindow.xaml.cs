@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using UMLEditort.Entities;
 
 namespace UMLEditort
 {
@@ -31,10 +32,8 @@ namespace UMLEditort
 
             if (_vm.Mode == Modes.Class)
             {
-                var rectangle = new Rectangle
+                var rectangle = new ClassObject("ClassObject")
                 {
-                    Stroke = new SolidColorBrush(Colors.Black),
-                    Fill = new SolidColorBrush(Colors.Black),
                     Width = 100,
                     Height = 100
                 };

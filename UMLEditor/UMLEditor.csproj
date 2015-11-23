@@ -55,7 +55,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Entities\ClassObject.xaml.cs">
+      <DependentUpon>ClassObject.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel.cs" />
+    <Page Include="Entities\ClassObject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
