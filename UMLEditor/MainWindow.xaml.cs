@@ -17,6 +17,26 @@ namespace UMLEditort
             InitializeComponent();
         }
 
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Mode = _vm.Mode == Modes.Select ? Modes.Undefined : Modes.Select;
+        }
+
+        private void AssociateButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Mode = _vm.Mode == Modes.Associate ? Modes.Undefined : Modes.Associate;
+        }
+
+        private void GeneralizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Mode = _vm.Mode == Modes.Generalize ? Modes.Undefined : Modes.Generalize;
+        }
+
+        private void CompositionButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Mode = _vm.Mode == Modes.Composition ? Modes.Undefined : Modes.Composition;
+        }
+
         private void ClassButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Class ? Modes.Undefined : Modes.Class;
@@ -57,6 +77,6 @@ namespace UMLEditort
 
                 DiagramCanvas.Children.Add(baseObject);
             }
-        }
+        }        
     }
 }

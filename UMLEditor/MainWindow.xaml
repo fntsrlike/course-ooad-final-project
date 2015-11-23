@@ -38,16 +38,16 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <DockPanel Grid.Row="0" Margin="10">
-                    <Button x:Name="SelectButton" Content="Select" ToolTip="Select"/>
+                    <Button x:Name="SelectButton" Content="Select" ToolTip="Select" Click="SelectButton_Click" Foreground="{Binding SelectBtnForeColor}" Background="{Binding SelectBtnBackColor}"/>
                 </DockPanel>
                 <DockPanel Grid.Row="1" Margin="10">
-                    <Button x:Name="AssociateButton" Content="Association Line" ToolTip="Association Line"/>
+                    <Button x:Name="AssociateButton" Content="Association Line" ToolTip="Association Line" Click="AssociateButton_Click" Foreground="{Binding AssociateBtnForeColor}" Background="{Binding AssociateBtnBackColor}"/>
                 </DockPanel>
                 <DockPanel Grid.Row="2" Margin="10">
-                    <Button x:Name="GeneralizeButton" Content="Generalization Line" ToolTip="Generalization Line"/>
+                    <Button x:Name="GeneralizeButton" Content="Generalization Line" ToolTip="Generalization Line" Click="GeneralizeButton_Click" Foreground="{Binding GeneralizeBtnForeColor}" Background="{Binding GeneralizeBtnBackColor}"/>
                 </DockPanel>
                 <DockPanel Grid.Row="3" Margin="10">
-                    <Button x:Name="CompositionButton" Content="Composition Line" ToolTip="Composition Line"/>
+                    <Button x:Name="CompositionButton" Content="Composition Line" ToolTip="Composition Line" Click="CompositionButton_Click" Foreground="{Binding CompositionBtnForeColor}" Background="{Binding CompositionBtnBackColor}"/>
                 </DockPanel>
                 <DockPanel Grid.Row="4" Margin="10">
                     <Button x:Name="ClassButton" Content="Class" ToolTip="Class" Click="ClassButton_Click" Foreground="{Binding ClassBtnForeColor}" Background="{Binding ClassBtnBackColor}"/>
