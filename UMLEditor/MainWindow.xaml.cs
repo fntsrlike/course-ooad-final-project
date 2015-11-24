@@ -82,7 +82,7 @@ namespace UMLEditort
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
             }
-            else if (_vm.Mode == Modes.Associate)
+            else if (_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize)
             {
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
@@ -97,7 +97,7 @@ namespace UMLEditort
         {
             var point = e.GetPosition(DiagramCanvas);
 
-            if (_vm.Mode == Modes.Associate && _lineFlag)
+            if ((_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize) && _lineFlag)
             {
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
@@ -105,9 +105,24 @@ namespace UMLEditort
                     break;
                 }
 
-                var associationLine = new AssociationLine(_startObjetct, _endObject);
-                var line = associationLine.GetLine();
+                ConnetionLine connectionLine;
+                switch (_vm.Mode)
+                {
+                    case Modes.Associate:
+                        connectionLine = new AssociationLine(_startObjetct, _endObject);
+                        break;
+                    case Modes.Composition:
+                        connectionLine = new CompositionLine(_startObjetct, _endObject);
+                        break;
+                    case Modes.Generalize:
+                        connectionLine = new GeneralizationLine(_startObjetct, _endObject);
+                        break;
+                    default:
+                        return;
+                }
 
+
+                var line = connectionLine.GetLine();
                 Canvas.SetLeft(line, 0);
                 Canvas.SetTop(line, 0);
 
