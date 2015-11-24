@@ -14,13 +14,7 @@ namespace UMLEditort.Entities
             Members = new List<ISelectableObject>();
             Members.AddRange(members);
         }
-
-        ~CompositeObject()
-        {
-            Members.Clear();
-        }
-
-        public string Test;
+        
         public bool Selected
         {
             get

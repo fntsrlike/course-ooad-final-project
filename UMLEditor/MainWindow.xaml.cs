@@ -249,7 +249,6 @@ namespace UMLEditort
             }
 
             compositeObject.Selected = true;
-            compositeObject.Test = "aewtqtqwtewewqt";
         }
 
         private void UnGroupMenuItem_Click(object sender, RoutedEventArgs e)
