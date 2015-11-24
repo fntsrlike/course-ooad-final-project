@@ -178,6 +178,15 @@ namespace UMLEditort
             // 選取模式
             else if (_vm.Mode == Modes.Select && _pressingFlag)
             {
+                var displacementX = _startPoint.X - point.X;
+                var displacementY = _startPoint.Y - point.Y;
+
+                if (Math.Abs(displacementX) < 1 && Math.Abs(displacementY) < 1)
+                {
+                    return;
+                    
+                }
+
                 // 選取範圍模式
                 if (_selectedObjects.Count == 0)
                 {
@@ -213,9 +222,6 @@ namespace UMLEditort
                 // 移動模式
                 else
                 {
-                    var displacementX = _startPoint.X - point.X;
-                    var displacementY = _startPoint.Y - point.Y;
-
                     foreach (var selectedObject in _selectedObjects)
                     {
                         var userControl = selectedObject as UserControl;
