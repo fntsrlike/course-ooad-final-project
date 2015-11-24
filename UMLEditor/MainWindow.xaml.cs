@@ -111,6 +111,12 @@ namespace UMLEditort
                 _startPoint = point;
                 _pressingFlag = true;
 
+                // Move Action
+                if (_selectedObjects.Select(selectedObject => selectedObject as IBaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
+                {
+                    return;
+                }
+
                 // Cancle origin selected
                 foreach (var baseObject in _selectedObjects)
                 {
