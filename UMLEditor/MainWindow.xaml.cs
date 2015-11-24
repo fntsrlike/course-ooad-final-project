@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,6 +64,7 @@ namespace UMLEditort
         {
             var point = e.GetPosition(DiagramCanvas);
 
+            // 插入 Class 模式
             if (_vm.Mode == Modes.Class)
             {
                 var baseObject = new ClassObject("Class Object")
@@ -77,6 +79,8 @@ namespace UMLEditort
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
             }
+
+            // 插入 Use Case 模式
             else if (_vm.Mode == Modes.UseCase)
             {
                 var baseObject = new UseCaseObject("Use Case Object")
@@ -91,6 +95,8 @@ namespace UMLEditort
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
             }
+
+            // 連線模式
             else if (_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize)
             {
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
@@ -100,6 +106,8 @@ namespace UMLEditort
                     break;
                 }
             }
+
+            // 選取模式
             else if (_vm.Mode == Modes.Select)
             {
                 foreach (var baseObject in _selectedObjects)
@@ -112,7 +120,6 @@ namespace UMLEditort
                 {
                     baseObject.Selected = true;
                     _selectedObjects.Add(baseObject);
-                    return;
                 }
                 
                 _startPoint = point;
@@ -124,6 +131,7 @@ namespace UMLEditort
         {
             var point = e.GetPosition(DiagramCanvas);
 
+            // 連線模式
             if ((_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize) && _lineFlag)
             {
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
@@ -156,27 +164,48 @@ namespace UMLEditort
                 DiagramCanvas.Children.Add(line);
                 _lineFlag = false;
             }
+
+            // 選取模式
             else if (_vm.Mode == Modes.Select && _pressingFlag)
             {
-                var width = point.X - _startPoint.X;
-                var height = point.Y - _startPoint.Y;
-
-                var x = width > 0 ? _startPoint.X : point.Y;
-                var y = height > 0 ? _startPoint.Y : point.Y;
-                var rectPoint = new Point(x, y);
-                var rectSize = new Size(Math.Abs(width), Math.Abs(height));
-                var selectedArea = new Rect(rectPoint, rectSize);
-
-                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>())
+                // 選取範圍模式
+                if (_selectedObjects.Count == 0)
                 {
-                    var rect = baseObject.GetRect();
+                    var width = point.X - _startPoint.X;
+                    var height = point.Y - _startPoint.Y;
+                    var x = width > 0 ? _startPoint.X : point.Y;
+                    var y = height > 0 ? _startPoint.Y : point.Y;
+                    var rectPoint = new Point(x, y);
+                    var rectSize = new Size(Math.Abs(width), Math.Abs(height));
+                    var selectedArea = new Rect(rectPoint, rectSize);
 
-                    if (selectedArea.IntersectsWith(rect))
+                    foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>())
                     {
-                        _selectedObjects.Add(baseObject);
-                        baseObject.Selected = true;
+                        var rect = baseObject.GetRect();
+
+                        if (selectedArea.IntersectsWith(rect))
+                        {
+                            _selectedObjects.Add(baseObject);
+                            baseObject.Selected = true;
+                        }
                     }
                 }
+
+                // 移動模式
+                else
+                {
+                    var selectedObject = _selectedObjects[0] as UserControl;
+                    Debug.Assert(selectedObject != null);
+
+                    DiagramCanvas.Children.Remove(selectedObject);
+
+                    Canvas.SetLeft(selectedObject, point.X);
+                    Canvas.SetTop(selectedObject, point.Y);
+                    DiagramCanvas.Children.Add(selectedObject);
+
+                    _selectedObjects[0].StartPoint = point;
+                }
+                
             }
         }
     }
