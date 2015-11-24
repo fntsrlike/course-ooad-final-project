@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
 
 namespace UMLEditort.Entities
 {
@@ -13,5 +9,13 @@ namespace UMLEditort.Entities
             get;
             set;
         }
+
+        Point StartPoint
+        {
+            get;
+            set;
+        }
+
+        bool IsContainPoint(Point point);
     }
 }

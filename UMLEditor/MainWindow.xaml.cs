@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Ink;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using UMLEditort.Entities;
 
 namespace UMLEditort
@@ -12,6 +10,10 @@ namespace UMLEditort
     /// </summary>
     public partial class MainWindow : Window
     {
+        private IBaseObject _startObjetct;
+        private IBaseObject _endObject;
+        private bool _lineFlag = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -20,6 +22,7 @@ namespace UMLEditort
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Select ? Modes.Undefined : Modes.Select;
+            
         }
 
         private void AssociateButton_Click(object sender, RoutedEventArgs e)
@@ -62,6 +65,7 @@ namespace UMLEditort
                 Canvas.SetLeft(baseObject, point.X);
                 Canvas.SetTop(baseObject, point.Y);
 
+                baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
             }
             else if (_vm.Mode == Modes.UseCase)
@@ -75,8 +79,41 @@ namespace UMLEditort
                 Canvas.SetLeft(baseObject, point.X);
                 Canvas.SetTop(baseObject, point.Y);
 
+                baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
             }
-        }        
+            else if (_vm.Mode == Modes.Associate)
+            {
+                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+                {
+                    _lineFlag = true;
+                    _startObjetct = baseObject;
+                    break;
+                }
+            }
+        }
+
+        private void DiagramCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var point = e.GetPosition(DiagramCanvas);
+
+            if (_vm.Mode == Modes.Associate && _lineFlag)
+            {
+                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+                {
+                    _endObject = baseObject;
+                    break;
+                }
+
+                var association = new Association(_startObjetct, _endObject);
+                var line = association.AssociationLine;
+
+                Canvas.SetLeft(line, 0);
+                Canvas.SetTop(line, 0);
+
+                DiagramCanvas.Children.Add(line);
+                _lineFlag = false;
+            }
+        }
     }
 }

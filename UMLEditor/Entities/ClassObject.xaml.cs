@@ -1,25 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace UMLEditort.Entities
 {
     /// <summary>
     /// ClassObject.xaml 的互動邏輯
     /// </summary>
-    public partial class ClassObject : UserControl, IBaseObject
+    public partial class ClassObject : IBaseObject
     {
+        private Point _startPoint;
+
         public ClassObject()
         {
             InitializeComponent();
@@ -43,6 +32,29 @@ namespace UMLEditort.Entities
                 ObjectNameText.Text = value;
                 
             }
+        }
+
+        public Point StartPoint
+        {
+            get
+            {
+                return _startPoint;
+                
+            }
+
+            set
+            {
+                _startPoint = value;
+                EndPoint = new Point(_startPoint.X + Width, _startPoint.Y + Height);
+            }
+        }
+
+        public Point EndPoint { get; private set; }
+
+        public bool IsContainPoint(Point point)
+        {
+            var rect = new Rect(StartPoint, EndPoint);
+            return rect.Contains(point);
         }
     }
 }

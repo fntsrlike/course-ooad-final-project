@@ -58,7 +58,7 @@
             </Grid>
             <Grid Grid.Column="1">
                 <DockPanel>
-                    <Canvas x:Name="DiagramCanvas" MouseDown="DiagramCanvas_MouseDown" Background="RoyalBlue"/>
+                    <Canvas x:Name="DiagramCanvas" MouseDown="DiagramCanvas_MouseDown" Background="RoyalBlue" MouseUp="DiagramCanvas_MouseUp"/>
                 </DockPanel>
             </Grid>
         </Grid>
