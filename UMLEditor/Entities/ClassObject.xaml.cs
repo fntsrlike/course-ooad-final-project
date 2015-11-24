@@ -8,16 +8,19 @@ namespace UMLEditort.Entities
     public partial class ClassObject : IBaseObject
     {
         private Point _startPoint;
+        private bool _selected;
 
         public ClassObject()
         {
             InitializeComponent();
+            Selected = false;
         }
 
         public ClassObject(string objectName)
         {            
             InitializeComponent();
             ObjectName = objectName;
+            Selected = false;
         }
 
         public string ObjectName
@@ -25,12 +28,10 @@ namespace UMLEditort.Entities
             get
             {
                 return ObjectNameText.Text; 
-                
             }
             set
             {
                 ObjectNameText.Text = value;
-                
             }
         }
 
@@ -39,13 +40,30 @@ namespace UMLEditort.Entities
             get
             {
                 return _startPoint;
-                
             }
 
             set
             {
                 _startPoint = value;
                 EndPoint = new Point(_startPoint.X + Width, _startPoint.Y + Height);
+            }
+        }
+
+        public bool Selected
+        {
+            get
+            {
+                return _selected;
+            }
+
+            set
+            {
+                _selected = value;
+                var visibility = value ? Visibility.Visible : Visibility.Hidden;
+                TopPort.Visibility = visibility;
+                RightPort.Visibility = visibility;
+                BottomPort.Visibility = visibility;
+                LeftPort.Visibility = visibility;
             }
         }
 

@@ -16,6 +16,12 @@ namespace UMLEditort.Entities
             set;
         }
 
+        bool Selected
+        {
+            get;
+            set;
+        }
+
         bool IsContainPoint(Point point);
     }
 }

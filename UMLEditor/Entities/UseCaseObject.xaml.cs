@@ -8,16 +8,19 @@ namespace UMLEditort.Entities
     public partial class UseCaseObject : IBaseObject
     {
         private Point _startPoint;
+        private bool _selected;
 
         public UseCaseObject()
         {
             InitializeComponent();
+            Selected = false;
         }
 
         public UseCaseObject(string objectName)
         {
             InitializeComponent();
             ObjectName = objectName;
+            Selected = false;
         }
 
         public string ObjectName
@@ -50,6 +53,24 @@ namespace UMLEditort.Entities
         }
 
         public Point EndPoint { get; private set; }
+        
+        public bool Selected
+        {
+            get
+            {
+                return _selected;
+            }
+
+            set
+            {
+                _selected = value;
+                var visibility = value ? Visibility.Visible : Visibility.Hidden;
+                TopPort.Visibility = visibility;
+                RightPort.Visibility = visibility;
+                BottomPort.Visibility = visibility;
+                LeftPort.Visibility = visibility;
+            }
+        }
 
         public bool IsContainPoint(Point point)
         {

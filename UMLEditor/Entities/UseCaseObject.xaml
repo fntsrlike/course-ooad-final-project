@@ -23,16 +23,16 @@
             <TextBlock x:Name="ObjectNameText" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid>
         <DockPanel Grid.Row="0" Grid.Column="1">
-            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Top" Width="5"/>
+            <Rectangle x:Name="TopPort" Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Top" Width="5"/>
         </DockPanel>
         <DockPanel Grid.Row="1" Grid.Column="2">
-            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
+            <Rectangle x:Name="RightPort" Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
         </DockPanel>
         <DockPanel Grid.Row="2" Grid.Column="1">
-            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Top" Width="5"/>
+            <Rectangle x:Name="BottomPort" Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Top" Width="5"/>
         </DockPanel>
         <DockPanel Grid.Row="1" Grid.Column="0">
-            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
+            <Rectangle x:Name="LeftPort" Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
         </DockPanel>
     </Grid>
 </UserControl>

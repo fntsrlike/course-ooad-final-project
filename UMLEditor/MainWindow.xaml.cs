@@ -13,6 +13,7 @@ namespace UMLEditort
         private IBaseObject _startObjetct;
         private IBaseObject _endObject;
         private bool _lineFlag = false;
+        private IBaseObject _selectedObject;
 
         public MainWindow()
         {
@@ -89,6 +90,23 @@ namespace UMLEditort
                     _lineFlag = true;
                     _startObjetct = baseObject;
                     break;
+                }
+            }
+            else if (_vm.Mode == Modes.Select)
+            {
+                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+                {
+                    if (_selectedObject != null)
+                    {
+                        _selectedObject.Selected = false;
+                    }
+                    baseObject.Selected = true;
+                    _selectedObject = baseObject;
+                    return;
+                }
+                if (_selectedObject != null)
+                {
+                    _selectedObject.Selected = false;
                 }
             }
         }
