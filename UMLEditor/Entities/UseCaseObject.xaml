@@ -7,7 +7,32 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="150">
     <Grid>
-        <Ellipse Fill="#FFF4F4F5" Stroke="Black"/>
-        <TextBlock x:Name="ObjectNameText" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Ellipse Fill="#FFF4F4F5" Stroke="Black"/>
+            <TextBlock x:Name="ObjectNameText" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+        <DockPanel Grid.Row="0" Grid.Column="1">
+            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Top" Width="5"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="2">
+            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="1">
+            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Top" Width="5"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="0">
+            <Rectangle Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
+        </DockPanel>
     </Grid>
 </UserControl>
