@@ -213,22 +213,25 @@ namespace UMLEditort
                 // 移動模式
                 else
                 {
-                    if (_selectedObjects[0].Compositer != null)
+                    var displacementX = _startPoint.X - point.X;
+                    var displacementY = _startPoint.Y - point.Y;
+
+                    foreach (var selectedObject in _selectedObjects)
                     {
-                        return;
+                        var userControl = selectedObject as UserControl;
+                        var baseObject = selectedObject as IBaseObject;
+                        Debug.Assert(userControl != null);
+                        Debug.Assert(baseObject != null);
+
+                        DiagramCanvas.Children.Remove(userControl);
+
+                        var newStartPoint = new Point(baseObject.StartPoint.X - displacementX, baseObject.StartPoint.Y - displacementY);
+                        baseObject.StartPoint = newStartPoint;
+                        Canvas.SetLeft(userControl, newStartPoint.X);
+                        Canvas.SetTop(userControl, newStartPoint.Y);
+                        DiagramCanvas.Children.Add(userControl);
                     }
-                    var selectedObject = _selectedObjects[0] as UserControl;
-                    var baseObject = _selectedObjects[0] as IBaseObject;
-                    Debug.Assert(selectedObject != null);
-                    Debug.Assert(baseObject != null);
 
-                    DiagramCanvas.Children.Remove(selectedObject);
-
-                    Canvas.SetLeft(selectedObject, point.X);
-                    Canvas.SetTop(selectedObject, point.Y);
-                    DiagramCanvas.Children.Add(selectedObject);
-                    
-                    baseObject.StartPoint = point;
                 }
                 
             }
