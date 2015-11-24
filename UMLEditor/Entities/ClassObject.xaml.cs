@@ -67,6 +67,8 @@ namespace UMLEditort.Entities
             }
         }
 
+        public CompositeObject Compositer { get; set; }
+
         public Point EndPoint { get; private set; }
 
         public bool IsContainPoint(Point point)

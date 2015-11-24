@@ -72,6 +72,8 @@ namespace UMLEditort.Entities
             }
         }
 
+        public CompositeObject Compositer { get; set; }
+
         public bool IsContainPoint(Point point)
         {
             var rect = new Rect(StartPoint, EndPoint);
