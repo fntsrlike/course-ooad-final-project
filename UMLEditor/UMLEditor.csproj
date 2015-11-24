@@ -63,6 +63,7 @@
       <DependentUpon>ClassObject.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entities\IBaseObject.cs" />
+    <Compile Include="Entities\ISelectableObject.cs" />
     <Compile Include="Entities\UseCaseObject.xaml.cs">
       <DependentUpon>UseCaseObject.xaml</DependentUpon>
     </Compile>

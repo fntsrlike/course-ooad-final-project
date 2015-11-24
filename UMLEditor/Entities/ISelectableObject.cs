@@ -2,21 +2,18 @@
 
 namespace UMLEditort.Entities
 {
-    interface IBaseObject : ISelectableObject
+    public interface ISelectableObject
     {
-        string ObjectName
+        bool Selected
         {
             get;
             set;
         }
 
-        Point StartPoint
+        CompositeObject Compositer
         {
             get;
             set;
         }
-        
-        bool IsContainPoint(Point point);
-        Rect GetRect();
     }
 }
