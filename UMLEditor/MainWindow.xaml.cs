@@ -19,14 +19,12 @@ namespace UMLEditort
         private Point _startPoint;
         private IBaseObject _startObjetct;
         private IBaseObject _endObject;
-        private IBaseObject _selectedObject;
-        private List<IBaseObject> _selectedObjects;
-
+        private readonly List<ISelectableObject> _selectedObjects;
 
         public MainWindow()
         {
             InitializeComponent();
-            _selectedObjects = new List<IBaseObject>();
+            _selectedObjects = new List<ISelectableObject>();
         }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
@@ -110,20 +108,32 @@ namespace UMLEditort
             // 選取模式
             else if (_vm.Mode == Modes.Select)
             {
+                _startPoint = point;
+                _pressingFlag = true;
+
+                // Cancle origin selected
                 foreach (var baseObject in _selectedObjects)
                 {
                     baseObject.Selected = false;
                 }
                 _selectedObjects.Clear();
 
+                // Select
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
-                    baseObject.Selected = true;
-                    _selectedObjects.Add(baseObject);
+                    if (baseObject.Compositer != null)
+                    {
+                        var compositer = baseObject.Compositer;
+                        compositer.Selected = true;
+                        var members = baseObject.Compositer.GetAllBaseObjects();
+                        _selectedObjects.AddRange(members);
+                    }
+                    else
+                    {
+                        baseObject.Selected = true;
+                        _selectedObjects.Add(baseObject);
+                    }
                 }
-                
-                _startPoint = point;
-                _pressingFlag = true;
             }
         }
 
@@ -185,8 +195,17 @@ namespace UMLEditort
 
                         if (selectedArea.IntersectsWith(rect))
                         {
-                            _selectedObjects.Add(baseObject);
-                            baseObject.Selected = true;
+                            if (baseObject.Compositer == null)
+                            {
+                                _selectedObjects.Add(baseObject);
+                                baseObject.Selected = true;
+                            }
+                            else
+                            {
+                                baseObject.Compositer.Selected = true;
+                                _selectedObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
+                            }
+                            
                         }
                     }
                 }
@@ -194,18 +213,61 @@ namespace UMLEditort
                 // 移動模式
                 else
                 {
+                    if (_selectedObjects[0].Compositer != null)
+                    {
+                        return;
+                    }
                     var selectedObject = _selectedObjects[0] as UserControl;
+                    var baseObject = _selectedObjects[0] as IBaseObject;
                     Debug.Assert(selectedObject != null);
+                    Debug.Assert(baseObject != null);
 
                     DiagramCanvas.Children.Remove(selectedObject);
 
                     Canvas.SetLeft(selectedObject, point.X);
                     Canvas.SetTop(selectedObject, point.Y);
                     DiagramCanvas.Children.Add(selectedObject);
-
-                    _selectedObjects[0].StartPoint = point;
+                    
+                    baseObject.StartPoint = point;
                 }
                 
+            }
+        }
+
+        private void GroupMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedObjects.Count < 1)
+            {
+                return;
+            }
+
+            var compositeObject = new CompositeObject(_selectedObjects);
+
+            foreach (var selectedObject in _selectedObjects)
+            {
+                selectedObject.Compositer = compositeObject;
+            }
+
+            compositeObject.Selected = true;
+            compositeObject.Test = "aewtqtqwtewewqt";
+        }
+
+        private void UnGroupMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedObjects.Count < 1 && _selectedObjects[0].Compositer == null)
+            {
+                return;
+            }
+
+            var compoister = _selectedObjects[0].Compositer;
+            if (_selectedObjects.Any(selectedObject => !compoister.Equals(selectedObject.Compositer)))
+            {
+                return;
+            }
+
+            foreach (var selectedObject in _selectedObjects)
+            {
+                selectedObject.Compositer = null;
             }
         }
     }
