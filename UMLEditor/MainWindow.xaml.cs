@@ -105,8 +105,8 @@ namespace UMLEditort
                     break;
                 }
 
-                var association = new Association(_startObjetct, _endObject);
-                var line = association.AssociationLine;
+                var associationLine = new AssociationLine(_startObjetct, _endObject);
+                var line = associationLine.GetLine();
 
                 Canvas.SetLeft(line, 0);
                 Canvas.SetTop(line, 0);

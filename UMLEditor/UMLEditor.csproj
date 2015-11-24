@@ -55,7 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Entities\Association.cs" />
+    <Compile Include="Entities\ConnectionLine.cs" />
+    <Compile Include="Entities\AssociationLine.cs" />
     <Compile Include="Entities\ClassObject.xaml.cs">
       <DependentUpon>ClassObject.xaml</DependentUpon>
     </Compile>

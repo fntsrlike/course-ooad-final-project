@@ -4,14 +4,13 @@ using System.Windows.Shapes;
 
 namespace UMLEditort.Entities
 {
-    class Association
+    class AssociationLine : ConnetionLine
     {
-        public Association(IBaseObject from, IBaseObject to)
-        {
-            From = from;
-            To = to;
+        private Line _line;
 
-            AssociationLine = new Line()
+        public AssociationLine(IBaseObject from, IBaseObject to) : base(from, to)
+        {
+            _line = new Line()
             {
                 StrokeThickness = 2,
                 Stroke = Brushes.Black,
@@ -23,10 +22,10 @@ namespace UMLEditort.Entities
                 Y2 = To.StartPoint.Y
             };
         }
-
-        public IBaseObject From { get; }
-        public IBaseObject To { get; }
-
-        public Line AssociationLine { get; }
+        
+        public override Line GetLine()
+        {
+            return _line;
+        }
     }
 }
