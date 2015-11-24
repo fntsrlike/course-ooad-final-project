@@ -23,5 +23,6 @@ namespace UMLEditort.Entities
         }
 
         bool IsContainPoint(Point point);
+        Rect GetRect();
     }
 }

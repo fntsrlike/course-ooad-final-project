@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 using UMLEditort.Entities;
 
 namespace UMLEditort
@@ -10,14 +13,19 @@ namespace UMLEditort
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool _pressingFlag;
+        private bool _lineFlag;
+        private Point _startPoint;
         private IBaseObject _startObjetct;
         private IBaseObject _endObject;
-        private bool _lineFlag = false;
         private IBaseObject _selectedObject;
+        private List<IBaseObject> _selectedObjects;
+
 
         public MainWindow()
         {
             InitializeComponent();
+            _selectedObjects = new List<IBaseObject>();
         }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
@@ -94,20 +102,21 @@ namespace UMLEditort
             }
             else if (_vm.Mode == Modes.Select)
             {
+                foreach (var baseObject in _selectedObjects)
+                {
+                    baseObject.Selected = false;
+                }
+                _selectedObjects.Clear();
+
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
-                    if (_selectedObject != null)
-                    {
-                        _selectedObject.Selected = false;
-                    }
                     baseObject.Selected = true;
-                    _selectedObject = baseObject;
+                    _selectedObjects.Add(baseObject);
                     return;
                 }
-                if (_selectedObject != null)
-                {
-                    _selectedObject.Selected = false;
-                }
+                
+                _startPoint = point;
+                _pressingFlag = true;
             }
         }
 
@@ -146,6 +155,28 @@ namespace UMLEditort
 
                 DiagramCanvas.Children.Add(line);
                 _lineFlag = false;
+            }
+            else if (_vm.Mode == Modes.Select && _pressingFlag)
+            {
+                var width = point.X - _startPoint.X;
+                var height = point.Y - _startPoint.Y;
+
+                var x = width > 0 ? _startPoint.X : point.Y;
+                var y = height > 0 ? _startPoint.Y : point.Y;
+                var rectPoint = new Point(x, y);
+                var rectSize = new Size(Math.Abs(width), Math.Abs(height));
+                var selectedArea = new Rect(rectPoint, rectSize);
+
+                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>())
+                {
+                    var rect = baseObject.GetRect();
+
+                    if (selectedArea.IntersectsWith(rect))
+                    {
+                        _selectedObjects.Add(baseObject);
+                        baseObject.Selected = true;
+                    }
+                }
             }
         }
     }

@@ -74,5 +74,11 @@ namespace UMLEditort.Entities
             var rect = new Rect(StartPoint, EndPoint);
             return rect.Contains(point);
         }
+
+        public Rect GetRect()
+        {
+            var rect = new Rect(StartPoint, EndPoint);
+            return rect;
+        }
     }
 }
