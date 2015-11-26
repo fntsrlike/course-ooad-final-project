@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
@@ -248,16 +249,40 @@ namespace UMLEditort
                     }
 
                 }
-                
+
+                // 確認是否可以 GROUP
+                var groupFlag = false;
+                var ungroupFlag = false;
+                if (_selectedObjects.Count > 1)
+                {
+                    var compositer = _selectedObjects[0].Compositer;
+                    var isSame = false;
+
+                    if (compositer != null)
+                    {
+                        foreach (var selectedObject in _selectedObjects)
+                        {
+                            isSame = compositer.Equals(selectedObject.Compositer);
+                            if (!isSame)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    groupFlag = !isSame;
+                    ungroupFlag = isSame;
+                }
+
+                GroupMenuItem.IsEnabled = groupFlag;
+                UnGroupMenuItem.IsEnabled = ungroupFlag;
+
             }
         }
 
         private void GroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedObjects.Count < 1)
-            {
-                return;
-            }
+            Debug.Assert(_selectedObjects.Count > 1);
 
             var compositeObject = new CompositeObject(_selectedObjects);
 
@@ -267,14 +292,15 @@ namespace UMLEditort
             }
 
             compositeObject.Selected = true;
+
+            GroupMenuItem.IsEnabled = false;
+            UnGroupMenuItem.IsEnabled = true;
         }
 
         private void UnGroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedObjects.Count < 1 && _selectedObjects[0].Compositer == null)
-            {
-                return;
-            }
+            Debug.Assert(_selectedObjects.Count > 1);
+            Debug.Assert(_selectedObjects[0].Compositer != null);
 
             var compoister = _selectedObjects[0].Compositer;
             if (_selectedObjects.Any(selectedObject => !compoister.Equals(selectedObject.Compositer)))
@@ -286,6 +312,9 @@ namespace UMLEditort
             {
                 selectedObject.Compositer = null;
             }
+
+            GroupMenuItem.IsEnabled = true;
+            UnGroupMenuItem.IsEnabled = false;
         }
     }
 }

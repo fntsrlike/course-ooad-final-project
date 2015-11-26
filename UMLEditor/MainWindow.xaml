@@ -19,8 +19,8 @@
             <Menu x:Name="Menu" DockPanel.Dock="Top">
                 <MenuItem Header="_File"></MenuItem>
                 <MenuItem Header="_Edit">
-                    <MenuItem Header="Group" HorizontalAlignment="Left" Width="144" Click="GroupMenuItem_Click"/>
-                    <MenuItem Header="UnGroup" HorizontalAlignment="Left" Width="144" Click="UnGroupMenuItem_Click"/>
+                    <MenuItem x:Name="GroupMenuItem" Header="Group" HorizontalAlignment="Left" IsEnabled="False" Width="144" Click="GroupMenuItem_Click"/>
+                    <MenuItem x:Name="UnGroupMenuItem" Header="UnGroup" HorizontalAlignment="Left" IsEnabled="False" Width="144" Click="UnGroupMenuItem_Click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
