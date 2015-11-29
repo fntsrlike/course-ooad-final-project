@@ -13,17 +13,17 @@ namespace UMLEditort.Entities
         public ClassObject()
         {
             InitializeComponent();
-            Selected = false;
+            _selected = false;
         }
 
         public ClassObject(string objectName)
         {            
             InitializeComponent();
-            ObjectName = objectName;
-            Selected = false;
+            _selected = false;
+            ObjectNameText.Text = objectName;
         }
 
-        public string ObjectName
+        public override string ObjectName
         {
             get
             {
@@ -35,7 +35,7 @@ namespace UMLEditort.Entities
             }
         }
 
-        public Point StartPoint
+        public override Point StartPoint
         {
             get
             {
@@ -49,7 +49,7 @@ namespace UMLEditort.Entities
             }
         }
 
-        public bool Selected
+        public override bool Selected
         {
             get
             {
@@ -66,18 +66,8 @@ namespace UMLEditort.Entities
                 LeftPort.Visibility = visibility;
             }
         }
-
-        public CompositeObject Compositer { get; set; }
-
-        public Point EndPoint { get; private set; }
-
-        public bool IsContainPoint(Point point)
-        {
-            var rect = new Rect(StartPoint, EndPoint);
-            return rect.Contains(point);
-        }
-
-        public Rect GetRect()
+        
+        public override Rect GetRect()
         {
             var rect = new Rect(StartPoint, EndPoint);
             return rect;

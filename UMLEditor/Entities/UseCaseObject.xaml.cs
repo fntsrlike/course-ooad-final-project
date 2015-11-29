@@ -5,7 +5,7 @@ namespace UMLEditort.Entities
     /// <summary>
     /// UseCaseObject.xaml 的互動邏輯
     /// </summary>
-    public partial class UseCaseObject : IBaseObject
+    public partial class UseCaseObject
     {
         private Point _startPoint;
         private bool _selected;
@@ -13,17 +13,17 @@ namespace UMLEditort.Entities
         public UseCaseObject()
         {
             InitializeComponent();
-            Selected = false;
+            _selected = false;
         }
 
         public UseCaseObject(string objectName)
         {
             InitializeComponent();
-            ObjectName = objectName;
-            Selected = false;
+            _selected = false;
+            ObjectNameText.Text = objectName;
         }
 
-        public string ObjectName
+        public override string ObjectName
         {
             get
             {
@@ -33,16 +33,14 @@ namespace UMLEditort.Entities
             set
             {
                 ObjectNameText.Text = value;
-
             }
         }
 
-        public Point StartPoint
+        public override Point StartPoint
         {
             get
             {
                 return _startPoint;
-
             }
 
             set
@@ -52,9 +50,7 @@ namespace UMLEditort.Entities
             }
         }
 
-        public Point EndPoint { get; private set; }
-        
-        public bool Selected
+        public override bool Selected
         {
             get
             {
@@ -72,18 +68,10 @@ namespace UMLEditort.Entities
             }
         }
 
-        public CompositeObject Compositer { get; set; }
-
-        public bool IsContainPoint(Point point)
-        {
-            var rect = new Rect(StartPoint, EndPoint);
-            return rect.Contains(point);
-        }
-
-        public Rect GetRect()
+        public override Rect GetRect()
         {
             var rect = new Rect(StartPoint, EndPoint);
             return rect;
-        }
+        }        
     }
 }

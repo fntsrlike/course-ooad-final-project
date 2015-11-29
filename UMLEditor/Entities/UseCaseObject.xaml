@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="UMLEditort.Entities.UseCaseObject"
+﻿<local:BaseObject x:Class="UMLEditort.Entities.UseCaseObject"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -35,4 +35,4 @@
             <Rectangle x:Name="LeftPort" Fill="#FFF4F4F5" Height="5" Stroke="Black" VerticalAlignment="Center" Width="5"/>
         </DockPanel>
     </Grid>
-</UserControl>
+</local:BaseObject>
