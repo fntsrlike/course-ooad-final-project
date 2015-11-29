@@ -129,11 +129,12 @@ namespace UMLEditort
                 // Select
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
-                    if (baseObject.Compositer != null)
+                    if (baseObject.GetOutermostCompositer() != null)
                     {
-                        var compositer = baseObject.Compositer;
+                        var compositer = baseObject.GetOutermostCompositer();                        
+
                         compositer.Selected = true;
-                        var members = baseObject.Compositer.GetAllBaseObjects();
+                        var members = compositer.GetAllBaseObjects();
                         _selectedObjects.AddRange(members);
                     }
                     else
@@ -152,129 +153,13 @@ namespace UMLEditort
             // 連線模式
             if ((_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize) && _lineFlag)
             {
-                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
-                {
-                    _endObject = baseObject;
-                    break;
-                }
-
-                ConnetionLine connectionLine;
-                switch (_vm.Mode)
-                {
-                    case Modes.Associate:
-                        connectionLine = new AssociationLine(_startObjetct, _endObject);
-                        break;
-                    case Modes.Composition:
-                        connectionLine = new CompositionLine(_startObjetct, _endObject);
-                        break;
-                    case Modes.Generalize:
-                        connectionLine = new GeneralizationLine(_startObjetct, _endObject);
-                        break;
-                    default:
-                        return;
-                }
-
-
-                var line = connectionLine.GetLine();
-                Canvas.SetLeft(line, 0);
-                Canvas.SetTop(line, 0);
-
-                DiagramCanvas.Children.Add(line);
-                _lineFlag = false;
+                LineModeMouseUp(point);
             }
 
             // 選取模式
             else if (_vm.Mode == Modes.Select && _pressingFlag)
             {
-                var displacementX = _startPoint.X - point.X;
-                var displacementY = _startPoint.Y - point.Y;
-
-                if (Math.Abs(displacementX) < 1 && Math.Abs(displacementY) < 1)
-                {
-                    return;
-                    
-                }
-
-                // 選取範圍模式
-                if (_selectedObjects.Count == 0)
-                {
-                    var width = point.X - _startPoint.X;
-                    var height = point.Y - _startPoint.Y;
-                    var x = width > 0 ? _startPoint.X : point.Y;
-                    var y = height > 0 ? _startPoint.Y : point.Y;
-                    var rectPoint = new Point(x, y);
-                    var rectSize = new Size(Math.Abs(width), Math.Abs(height));
-                    var selectedArea = new Rect(rectPoint, rectSize);
-
-                    foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>())
-                    {
-                        var rect = baseObject.GetRect();
-
-                        if (selectedArea.IntersectsWith(rect))
-                        {
-                            if (baseObject.Compositer == null)
-                            {
-                                _selectedObjects.Add(baseObject);
-                                baseObject.Selected = true;
-                            }
-                            else
-                            {
-                                baseObject.Compositer.Selected = true;
-                                _selectedObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
-                            }
-                            
-                        }
-                    }
-                }
-
-                // 移動模式
-                else
-                {
-                    foreach (var selectedObject in _selectedObjects)
-                    {
-                        var userControl = selectedObject as UserControl;
-                        var baseObject = selectedObject as IBaseObject;
-                        Debug.Assert(userControl != null);
-                        Debug.Assert(baseObject != null);
-
-                        DiagramCanvas.Children.Remove(userControl);
-
-                        var newStartPoint = new Point(baseObject.StartPoint.X - displacementX, baseObject.StartPoint.Y - displacementY);
-                        baseObject.StartPoint = newStartPoint;
-                        Canvas.SetLeft(userControl, newStartPoint.X);
-                        Canvas.SetTop(userControl, newStartPoint.Y);
-                        DiagramCanvas.Children.Add(userControl);
-                    }
-
-                }
-
-                // 確認是否可以 GROUP
-                var groupFlag = false;
-                var ungroupFlag = false;
-                if (_selectedObjects.Count > 1)
-                {
-                    var compositer = _selectedObjects[0].Compositer;
-                    var isSame = false;
-
-                    if (compositer != null)
-                    {
-                        foreach (var selectedObject in _selectedObjects)
-                        {
-                            isSame = compositer.Equals(selectedObject.Compositer);
-                            if (!isSame)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    groupFlag = !isSame;
-                    ungroupFlag = isSame;
-                }
-
-                GroupMenuItem.IsEnabled = groupFlag;
-                UnGroupMenuItem.IsEnabled = ungroupFlag;
-
+                SelectModeMouseUp(point);
             }
         }
 
@@ -282,14 +167,36 @@ namespace UMLEditort
         {
             Debug.Assert(_selectedObjects.Count > 1);
 
-            var compositeObject = new CompositeObject(_selectedObjects);
+            var baseObjectWithoutGroup = _selectedObjects.Where(selectObject => selectObject.Compositer == null).ToList();
+            var compositeObjects = new List<ISelectableObject>();
 
-            foreach (var selectedObject in _selectedObjects)
+            foreach (var selectObject in _selectedObjects.Where(selectObject => selectObject.Compositer != null))
             {
-                selectedObject.Compositer = compositeObject;
+                var composite = selectObject.GetOutermostCompositer();
+                
+                if (!compositeObjects.Contains(composite))
+                {
+                    compositeObjects.Add(composite);
+                }
             }
 
-            compositeObject.Selected = true;
+            var members = new List<ISelectableObject>();            
+            members.AddRange(baseObjectWithoutGroup);
+            members.AddRange(compositeObjects);
+
+            var newCompositeObject = new CompositeObject(members);
+
+            foreach (var baseObject in baseObjectWithoutGroup)
+            {
+                baseObject.Compositer = newCompositeObject;
+            }
+
+            foreach (var compositeObject in compositeObjects)
+            {
+                compositeObject.Compositer = newCompositeObject;
+            }
+
+            newCompositeObject.Selected = true;
 
             GroupMenuItem.IsEnabled = false;
             UnGroupMenuItem.IsEnabled = true;
@@ -300,19 +207,164 @@ namespace UMLEditort
             Debug.Assert(_selectedObjects.Count > 1);
             Debug.Assert(_selectedObjects[0].Compositer != null);
 
-            var compoister = _selectedObjects[0].Compositer;
-            if (_selectedObjects.Any(selectedObject => !compoister.Equals(selectedObject.Compositer)))
+            var compositer = _selectedObjects[0].GetOutermostCompositer();
+            Debug.Assert(compositer != null);
+            
+            foreach (var member in compositer.Members)
             {
-                return;
-            }
-
-            foreach (var selectedObject in _selectedObjects)
-            {
-                selectedObject.Compositer = null;
+                member.Compositer = null;
             }
 
             GroupMenuItem.IsEnabled = true;
             UnGroupMenuItem.IsEnabled = false;
+        }
+
+        /// <summary>
+        /// 在畫線模式下，滑鼠點擊後放開引發的事件
+        /// </summary>
+        /// <param name="point"></param>
+        private void LineModeMouseUp(Point point)
+        {
+            foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+            {
+                _endObject = baseObject;
+                break;
+            }
+
+            ConnetionLine connectionLine;
+            switch (_vm.Mode)
+            {
+                case Modes.Associate:
+                    connectionLine = new AssociationLine(_startObjetct, _endObject);
+                    break;
+                case Modes.Composition:
+                    connectionLine = new CompositionLine(_startObjetct, _endObject);
+                    break;
+                case Modes.Generalize:
+                    connectionLine = new GeneralizationLine(_startObjetct, _endObject);
+                    break;
+                default:
+                    return;
+            }
+
+
+            var line = connectionLine.GetLine();
+            Canvas.SetLeft(line, 0);
+            Canvas.SetTop(line, 0);
+
+            DiagramCanvas.Children.Add(line);
+            _lineFlag = false;
+        }
+
+        /// <summary>
+        /// 在選取模式下，滑鼠點擊後放開引發的事件
+        /// </summary>
+        /// <param name="point"></param>
+        private void SelectModeMouseUp(Point point)
+        {
+            var displacementX = _startPoint.X - point.X;
+            var displacementY = _startPoint.Y - point.Y;
+
+            if (Math.Abs(displacementX) < 1 && Math.Abs(displacementY) < 1)
+            {       
+                // 不做事，但仍要執行下方的選單啟用狀態檢查
+            }            
+            else if (_selectedObjects.Count == 0)
+            {
+                // 選取範圍模式
+                SelectAreaAction(point);
+            }
+            else
+            {
+                // 移動模式
+                MoveAction(displacementX, displacementY);
+            }
+
+            CheckGroupMenuItemIsEnabled();
+        }
+
+        private void CheckGroupMenuItemIsEnabled()
+        {
+            // 確認是否可以 GROUP
+            var groupFlag = false;
+            var ungroupFlag = false;
+
+            // 
+            if (_selectedObjects.Count > 1)
+            {
+                var isSame = false;
+
+                // 取得作為標準 Compositer
+                var compositer = _selectedObjects[0].GetOutermostCompositer();
+
+                if (compositer != null)
+                {
+                    foreach (var selectedObject in _selectedObjects)
+                    {
+                        isSame = compositer.Equals(selectedObject.GetOutermostCompositer());
+                        if (!isSame)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                groupFlag = !isSame;
+                ungroupFlag = isSame;
+            }
+
+            GroupMenuItem.IsEnabled = groupFlag;
+            UnGroupMenuItem.IsEnabled = ungroupFlag;
+        }
+
+        private void SelectAreaAction(Point point)
+        {
+            var width = point.X - _startPoint.X;
+            var height = point.Y - _startPoint.Y;
+            var x = width > 0 ? _startPoint.X : point.Y;
+            var y = height > 0 ? _startPoint.Y : point.Y;
+            var rectPoint = new Point(x, y);
+            var rectSize = new Size(Math.Abs(width), Math.Abs(height));
+            var selectedArea = new Rect(rectPoint, rectSize);
+
+            foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>())
+            {
+                var rect = baseObject.GetRect();
+
+                if (selectedArea.IntersectsWith(rect))
+                {
+                    if (baseObject.Compositer == null)
+                    {
+                        _selectedObjects.Add(baseObject);
+                        baseObject.Selected = true;
+                    }
+                    else
+                    {
+                        baseObject.Compositer.Selected = true;
+                        _selectedObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
+                    }
+
+                }
+            }
+        }
+
+        private void MoveAction(double displacementX, double displacementY)
+        {
+            foreach (var selectedObject in _selectedObjects)
+            {
+                var userControl = selectedObject as UserControl;
+                var baseObject = selectedObject as IBaseObject;
+                Debug.Assert(userControl != null);
+                Debug.Assert(baseObject != null);
+
+                DiagramCanvas.Children.Remove(userControl);
+
+                var newStartPoint = new Point(baseObject.StartPoint.X - displacementX, baseObject.StartPoint.Y - displacementY);
+                baseObject.StartPoint = newStartPoint;
+                Canvas.SetLeft(userControl, newStartPoint.X);
+                Canvas.SetTop(userControl, newStartPoint.Y);
+                DiagramCanvas.Children.Add(userControl);
+            }
         }
     }
 }
