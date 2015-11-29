@@ -54,6 +54,16 @@ namespace UMLEditort.Entities
                 }
             }
             return list;
-        } 
+        }
+
+        public CompositeObject GetOutermostCompositer()
+        {
+            var compositer = this;
+            while (compositer.Compositer != null)
+            {
+                compositer = compositer.Compositer;
+            }
+            return compositer;
+        }
     }
 }

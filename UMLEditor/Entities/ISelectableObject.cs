@@ -15,5 +15,7 @@ namespace UMLEditort.Entities
             get;
             set;
         }
+
+        CompositeObject GetOutermostCompositer();
     }
 }

@@ -15,6 +15,22 @@ namespace UMLEditort.Entities
 
         public CompositeObject Compositer { get; set; }
 
+        public CompositeObject GetOutermostCompositer()
+        {
+            var compositer = Compositer;
+
+            if (compositer == null)
+            {
+                return null;
+            }
+
+            while (compositer.Compositer != null)
+            {
+                compositer = compositer.Compositer;
+            }
+            return compositer;
+        }
+
         public bool IsContainPoint(Point point)
         {
             var rect = new Rect(StartPoint, EndPoint);
