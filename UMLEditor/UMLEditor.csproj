@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\RenameDialog.xaml.cs">
+      <DependentUpon>RenameDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entities\BaseObject.cs" />
     <Compile Include="Entities\CompositeObject.cs" />
     <Compile Include="Entities\CompositionLine.cs" />
@@ -70,6 +73,10 @@
       <DependentUpon>UseCaseObject.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel.cs" />
+    <Page Include="Dialogs\RenameDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Entities\ClassObject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

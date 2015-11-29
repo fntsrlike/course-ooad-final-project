@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using UMLEditort.Dialogs;
 using UMLEditort.Entities;
 
 namespace UMLEditort
@@ -18,13 +19,14 @@ namespace UMLEditort
         private Point _startPoint;
         private IBaseObject _startObjetct;
         private IBaseObject _endObject;
-        private readonly List<ISelectableObject> _selectedObjects;
+        private ISelectableObject _selectedObject;
+        private readonly List<ISelectableObject> _selectedRelativeObjects;        
         private int _objectCounter;
 
         public MainWindow()
         {
             InitializeComponent();
-            _selectedObjects = new List<ISelectableObject>();
+            _selectedRelativeObjects = new List<ISelectableObject>();
             _objectCounter = 0;
         }
 
@@ -77,6 +79,8 @@ namespace UMLEditort
 
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
+                _selectedObject = baseObject;
+                ChangeObjectName.IsEnabled = true;
                 _objectCounter++;
             }
 
@@ -94,6 +98,8 @@ namespace UMLEditort
 
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
+                _selectedObject = baseObject;
+                ChangeObjectName.IsEnabled = true;
                 _objectCounter++;
             }
 
@@ -115,33 +121,38 @@ namespace UMLEditort
                 _pressingFlag = true;
 
                 // Move Action
-                if (_selectedObjects.Select(selectedObject => selectedObject as IBaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
+                if (_selectedRelativeObjects.Select(selectedObject => selectedObject as IBaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
                 {
                     return;
                 }
 
                 // Cancle origin selected
-                foreach (var baseObject in _selectedObjects)
+                foreach (var baseObject in _selectedRelativeObjects)
                 {
                     baseObject.Selected = false;
                 }
-                _selectedObjects.Clear();
+                _selectedRelativeObjects.Clear();
+                _selectedObject = null;
+                ChangeObjectName.IsEnabled = false;
 
                 // Select
                 foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
+                    _selectedObject = baseObject;
+                    ChangeObjectName.IsEnabled = true;
+
                     if (baseObject.GetOutermostCompositer() != null)
                     {
                         var compositer = baseObject.GetOutermostCompositer();                        
 
                         compositer.Selected = true;
                         var members = compositer.GetAllBaseObjects();
-                        _selectedObjects.AddRange(members);
+                        _selectedRelativeObjects.AddRange(members);
                     }
                     else
                     {
                         baseObject.Selected = true;
-                        _selectedObjects.Add(baseObject);
+                        _selectedRelativeObjects.Add(baseObject);
                     }
                 }
             }
@@ -166,12 +177,12 @@ namespace UMLEditort
 
         private void GroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(_selectedObjects.Count > 1);
+            Debug.Assert(_selectedRelativeObjects.Count > 1);
 
-            var baseObjectWithoutGroup = _selectedObjects.Where(selectObject => selectObject.Compositer == null).ToList();
+            var baseObjectWithoutGroup = _selectedRelativeObjects.Where(selectObject => selectObject.Compositer == null).ToList();
             var compositeObjects = new List<ISelectableObject>();
 
-            foreach (var selectObject in _selectedObjects.Where(selectObject => selectObject.Compositer != null))
+            foreach (var selectObject in _selectedRelativeObjects.Where(selectObject => selectObject.Compositer != null))
             {
                 var composite = selectObject.GetOutermostCompositer();
                 
@@ -205,10 +216,10 @@ namespace UMLEditort
 
         private void UnGroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(_selectedObjects.Count > 1);
-            Debug.Assert(_selectedObjects[0].Compositer != null);
+            Debug.Assert(_selectedRelativeObjects.Count > 1);
+            Debug.Assert(_selectedRelativeObjects[0].Compositer != null);
 
-            var compositer = _selectedObjects[0].GetOutermostCompositer();
+            var compositer = _selectedRelativeObjects[0].GetOutermostCompositer();
             Debug.Assert(compositer != null);
             
             foreach (var member in compositer.Members)
@@ -270,7 +281,7 @@ namespace UMLEditort
             {       
                 // 不做事，但仍要執行下方的選單啟用狀態檢查
             }            
-            else if (_selectedObjects.Count == 0)
+            else if (_selectedRelativeObjects.Count == 0)
             {
                 // 選取範圍模式
                 SelectAreaAction(point);
@@ -291,16 +302,16 @@ namespace UMLEditort
             var ungroupFlag = false;
 
             // 
-            if (_selectedObjects.Count > 1)
+            if (_selectedRelativeObjects.Count > 1)
             {
                 var isSame = false;
 
                 // 取得作為標準 Compositer
-                var compositer = _selectedObjects[0].GetOutermostCompositer();
+                var compositer = _selectedRelativeObjects[0].GetOutermostCompositer();
 
                 if (compositer != null)
                 {
-                    foreach (var selectedObject in _selectedObjects)
+                    foreach (var selectedObject in _selectedRelativeObjects)
                     {
                         isSame = compositer.Equals(selectedObject.GetOutermostCompositer());
                         if (!isSame)
@@ -336,13 +347,13 @@ namespace UMLEditort
                 {
                     if (baseObject.Compositer == null)
                     {
-                        _selectedObjects.Add(baseObject);
+                        _selectedRelativeObjects.Add(baseObject);
                         baseObject.Selected = true;
                     }
                     else
                     {
                         baseObject.Compositer.Selected = true;
-                        _selectedObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
+                        _selectedRelativeObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
                     }
 
                 }
@@ -351,7 +362,7 @@ namespace UMLEditort
 
         private void MoveAction(double displacementX, double displacementY)
         {
-            foreach (var selectedObject in _selectedObjects)
+            foreach (var selectedObject in _selectedRelativeObjects)
             {
                 var userControl = selectedObject as UserControl;
                 var baseObject = selectedObject as IBaseObject;
@@ -365,6 +376,26 @@ namespace UMLEditort
                 Canvas.SetLeft(userControl, newStartPoint.X);
                 Canvas.SetTop(userControl, newStartPoint.Y);
                 DiagramCanvas.Children.Add(userControl);
+            }
+        }
+
+        private void ChangeObjectName_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(_selectedObject != null);
+            Debug.Assert(_selectedObject is BaseObject);
+
+            var baseObject = (BaseObject) _selectedObject;
+
+            var dialog = new RenameDialog()
+            {
+                ObjectName = baseObject.ObjectName,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                baseObject.ObjectName = dialog.ObjectName;
             }
         }
     }
