@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 using UMLEditort.Entities;
 
 namespace UMLEditort
@@ -13,7 +11,7 @@ namespace UMLEditort
     /// <summary>
     /// MainWindow.xaml 的互動邏輯
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private bool _pressingFlag;
         private bool _lineFlag;
