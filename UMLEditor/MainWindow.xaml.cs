@@ -19,12 +19,13 @@ namespace UMLEditort
         private IBaseObject _startObjetct;
         private IBaseObject _endObject;
         private readonly List<ISelectableObject> _selectedObjects;
-        private int objectCounter = 0;
+        private int _objectCounter;
 
         public MainWindow()
         {
             InitializeComponent();
             _selectedObjects = new List<ISelectableObject>();
+            _objectCounter = 0;
         }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
@@ -65,7 +66,7 @@ namespace UMLEditort
             // 插入 Class 模式
             if (_vm.Mode == Modes.Class)
             {
-                var baseObject = new ClassObject($"#{objectCounter} Class Object")
+                var baseObject = new ClassObject($"#{_objectCounter} Class Object")
                 {
                     Width = 150,
                     Height = 100
@@ -76,13 +77,13 @@ namespace UMLEditort
 
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
-                objectCounter++;
+                _objectCounter++;
             }
 
             // 插入 Use Case 模式
             else if (_vm.Mode == Modes.UseCase)
             {
-                var baseObject = new UseCaseObject($"#{objectCounter} Use Case Object")
+                var baseObject = new UseCaseObject($"#{_objectCounter} Use Case Object")
                 {
                     Width = 150,
                     Height = 100
@@ -93,7 +94,7 @@ namespace UMLEditort
 
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
-                objectCounter++;
+                _objectCounter++;
             }
 
             // 連線模式
