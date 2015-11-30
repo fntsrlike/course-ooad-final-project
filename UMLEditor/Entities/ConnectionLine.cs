@@ -1,10 +1,10 @@
-﻿using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace UMLEditort.Entities
 {
-    internal abstract class ConnetionLine
+    public abstract class ConnectionLine : UserControl
     {
-        protected ConnetionLine(IBaseObject from, IBaseObject to)
+        protected ConnectionLine(IBaseObject from, IBaseObject to)
         {
             From = from;
             To = to;
@@ -12,7 +12,5 @@ namespace UMLEditort.Entities
 
         public IBaseObject From { get; }
         public IBaseObject To { get; }
-
-        public abstract Line GetLine();
     }
 }

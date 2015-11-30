@@ -2,7 +2,7 @@
 
 namespace UMLEditort.Entities
 {
-    interface IBaseObject : ISelectableObject
+    public interface IBaseObject : ISelectableObject
     {
         string ObjectName
         {

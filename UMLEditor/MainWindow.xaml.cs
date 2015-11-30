@@ -243,7 +243,7 @@ namespace UMLEditort
                 break;
             }
 
-            ConnetionLine connectionLine;
+            ConnectionLine connectionLine;
             switch (_vm.Mode)
             {
                 case Modes.Associate:
@@ -259,12 +259,14 @@ namespace UMLEditort
                     return;
             }
 
+            var startPoint = _startObjetct.StartPoint;
+            var endPoint = _endObject.StartPoint;
+            var x = startPoint.X + ((endPoint.X - startPoint.X) > 0 ? +5 : -5);
+            var y = startPoint.Y + ((endPoint.X - startPoint.X) > 0 ? -5 : +5);
+            Canvas.SetLeft(connectionLine, x);
+            Canvas.SetTop(connectionLine, y);
 
-            var line = connectionLine.GetLine();
-            Canvas.SetLeft(line, 0);
-            Canvas.SetTop(line, 0);
-
-            DiagramCanvas.Children.Add(line);
+            DiagramCanvas.Children.Add(connectionLine);
             _lineFlag = false;
         }
 

@@ -1,0 +1,17 @@
+﻿<local:ConnectionLine x:Class="UMLEditort.Entities.AssociationLine"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UMLEditort.Entities"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="300" Background="White">
+    <Canvas x:Name="ArrowCanvas" RenderTransformOrigin="0.5,0.5">
+        <Canvas.RenderTransform>
+            <RotateTransform Angle="0"/>
+        </Canvas.RenderTransform>
+        <Line x:Name="ArrowLine" X1="0" X2="300" Y1="15" Y2="15" StrokeThickness="2" Stroke="Black"
+                   HorizontalAlignment = "Left"
+                   VerticalAlignment = "Top"/>
+    </Canvas>
+</local:ConnectionLine>
