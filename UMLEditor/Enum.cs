@@ -11,4 +11,12 @@
         UseCase
     }
 
+    public enum Ports
+    {
+        Top,
+        Right,
+        Bottom,
+        Left
+    }
+
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using UMLEditort.Args;
 using UMLEditort.Dialogs;
 using UMLEditort.Entities;
 
@@ -253,39 +254,74 @@ namespace UMLEditort
 
             if (_startObjetct != null && _endObject != null)
             {
-                DrawLine();
+                var startPort = GetNearestPort(_startPoint, _startObjetct);
+                var endPort = GetNearestPort(_endPoint, _endObject);
+                var startArgs = new ConnectionArgs()
+                {
+                    TargetObject = _startObjetct,
+                    TargetPort = startPort
+                };
+
+                var endArgs = new ConnectionArgs()
+                {
+                    TargetObject = _endObject,
+                    TargetPort = endPort
+                };
+                DrawLine(startArgs, endArgs, _vm.Mode);
             }
         }
 
-        private void DrawLine()
+        private void DrawLine(ConnectionArgs startArgs, ConnectionArgs endArgs, Modes mode)
         {
             ConnectionLine connectionLine;
-            var startPort = GetNearestPort(_startPoint, _startObjetct);
-            var endPort = GetNearestPort(_endPoint, _endObject);
-
-            switch (_vm.Mode)
+           
+            switch (mode)
             {
                 case Modes.Associate:
-                    connectionLine = new AssociationLine(startPort, endPort);
+                    connectionLine = new AssociationLine(startArgs, endArgs);
                     break;
                 case Modes.Composition:
-                    connectionLine = new CompositionLine(startPort, endPort);
+                    connectionLine = new CompositionLine(startArgs, endArgs);
                     break;
                 case Modes.Generalize:
-                    connectionLine = new GeneralizationLine(startPort, endPort);
+                    connectionLine = new GeneralizationLine(startArgs, endArgs);
                     break;
                 default:
                     return;
             }
             
-            Canvas.SetLeft(connectionLine, startPort.X);
-            Canvas.SetTop(connectionLine, startPort.Y-15);
+            Canvas.SetLeft(connectionLine, startArgs.TargetPoint.X);
+            Canvas.SetTop(connectionLine, startArgs.TargetPoint.Y-15);
 
             DiagramCanvas.Children.Add(connectionLine);
             _lineFlag = false;
         }
 
-        private Point GetNearestPort(Point point, IBaseObject baseObject)
+        private void RedrawLine(ConnectionLine line)
+        {
+            Modes _lindType;
+
+            if (line is AssociationLine)
+            {
+                _lindType = Modes.Associate;
+            }
+            else if (line is GeneralizationLine)
+            {
+                _lindType = Modes.Generalize;
+            }
+            else if (line is CompositionLine)
+            {
+                _lindType = Modes.Composition;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            DrawLine(line.StartConnectionArgs, line.EndConnectionArgs, _lindType);
+            DiagramCanvas.Children.Remove(line);
+        }
+
+        private Ports GetNearestPort(Point point, IBaseObject baseObject)
         {
             var topDistance = CalculateTwoPointsDistance(point, baseObject.TopPoint);
             var rightDistance = CalculateTwoPointsDistance(point, baseObject.RightPoint);
@@ -297,20 +333,20 @@ namespace UMLEditort
 
             if (Math.Abs(topDistance - minimumNumber) < 0.001)
             {
-                return baseObject.TopPoint;
+                return Ports.Top;
             }
 
             if (Math.Abs(rightDistance - minimumNumber) < 0.001)
             {
-                return baseObject.RightPoint;
+                return Ports.Right;
             }
 
             if (Math.Abs(bottomDistance - minimumNumber) < 0.001)
             {
-                return baseObject.BottomPoint;
+                return Ports.Bottom;
             }
 
-            return baseObject.LeftPoint;
+            return Ports.Left;
         }
 
         private double CalculateTwoPointsDistance(Point aPoint, Point bPoint)
@@ -421,13 +457,29 @@ namespace UMLEditort
                 Debug.Assert(userControl != null);
                 Debug.Assert(baseObject != null);
 
-                DiagramCanvas.Children.Remove(userControl);
+                
 
                 var newStartPoint = new Point(baseObject.StartPoint.X - displacementX, baseObject.StartPoint.Y - displacementY);
                 baseObject.StartPoint = newStartPoint;
                 Canvas.SetLeft(userControl, newStartPoint.X);
                 Canvas.SetTop(userControl, newStartPoint.Y);
+                DiagramCanvas.Children.Remove(userControl);
                 DiagramCanvas.Children.Add(userControl);
+
+                var lines = new List<ConnectionLine>();
+                lines.AddRange(DiagramCanvas.Children.OfType<ConnectionLine>().ToList());
+
+                foreach (var line in lines)
+                {
+                    if (line.StartConnectionArgs.TargetObject.Equals(selectedObject))
+                    {
+                        RedrawLine(line);
+                    }
+                    else if (line.EndConnectionArgs.TargetObject.Equals(selectedObject))
+                    {
+                        RedrawLine(line);
+                    }
+                }
             }
         }
 

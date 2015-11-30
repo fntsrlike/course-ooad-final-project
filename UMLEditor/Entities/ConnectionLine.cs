@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using UMLEditort.Args;
 
 namespace UMLEditort.Entities
 {
     public class ConnectionLine : UserControl
     {
-        protected ConnectionLine(Point startPort, Point endPort)
+        protected ConnectionLine(ConnectionArgs startConnectionArgs, ConnectionArgs endConnectionArgs)
         {
-            StartPort = startPort;
-            EndPort = endPort;
+            StartConnectionArgs = startConnectionArgs;
+            EndConnectionArgs = endConnectionArgs;
+            StartPort = StartConnectionArgs.TargetPoint;
+            EndPort = EndConnectionArgs.TargetPoint;
         }
 
         protected int ArrowEndpointHeight;
 
+        internal ConnectionArgs StartConnectionArgs { get; set; }
+        internal ConnectionArgs EndConnectionArgs { get; set; }
         public Point StartPort { get; }
         public Point EndPort { get; }
 

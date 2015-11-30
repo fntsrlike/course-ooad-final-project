@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using UMLEditort.Args;
 
 namespace UMLEditort.Entities
 {
@@ -9,7 +10,7 @@ namespace UMLEditort.Entities
     /// </summary>
     public partial class AssociationLine
     {
-        public AssociationLine(Point from, Point to) : base(from, to)
+        public AssociationLine(ConnectionArgs from, ConnectionArgs to) : base(from, to)
         {
             InitializeComponent();
             ArrowEndpointHeight = 0;
