@@ -7,9 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="300" Background="White">
     <Canvas x:Name="ArrowCanvas" RenderTransformOrigin="0.5,0.5">
-        <Canvas.RenderTransform>
-            <RotateTransform Angle="0"/>
-        </Canvas.RenderTransform>
         <Polygon x:Name="ArrowEndpoint"
                 Points="0,15 30,0 30,30"
                 Stroke="Black" 

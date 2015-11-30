@@ -17,6 +17,7 @@ namespace UMLEditort
         private bool _pressingFlag;
         private bool _lineFlag;
         private Point _startPoint;
+        private Point _endPoint;
         private IBaseObject _startObjetct;
         private IBaseObject _endObject;
         private ISelectableObject _selectedObject;
@@ -63,7 +64,13 @@ namespace UMLEditort
 
         private void DiagramCanvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            
+
             var point = e.GetPosition(DiagramCanvas);
+            _startPoint = point;
+            _endPoint = _startPoint;
+            _startObjetct = null;
+            _endObject = null;
 
             // 插入 Class 模式
             if (_vm.Mode == Modes.Class)
@@ -117,7 +124,6 @@ namespace UMLEditort
             // 選取模式
             else if (_vm.Mode == Modes.Select)
             {
-                _startPoint = point;
                 _pressingFlag = true;
 
                 // Move Action
@@ -156,11 +162,13 @@ namespace UMLEditort
                     }
                 }
             }
+
         }
 
         private void DiagramCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var point = e.GetPosition(DiagramCanvas);
+            _endPoint = point;
 
             // 連線模式
             if ((_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize) && _lineFlag)
@@ -243,31 +251,73 @@ namespace UMLEditort
                 break;
             }
 
+            if (_startObjetct != null && _endObject != null)
+            {
+                DrawLine();
+            }
+        }
+
+        private void DrawLine()
+        {
             ConnectionLine connectionLine;
+            var startPort = GetNearestPort(_startPoint, _startObjetct);
+            var endPort = GetNearestPort(_endPoint, _endObject);
+
             switch (_vm.Mode)
             {
                 case Modes.Associate:
-                    connectionLine = new AssociationLine(_startObjetct, _endObject);
+                    connectionLine = new AssociationLine(startPort, endPort);
                     break;
                 case Modes.Composition:
-                    connectionLine = new CompositionLine(_startObjetct, _endObject);
+                    connectionLine = new CompositionLine(startPort, endPort);
                     break;
                 case Modes.Generalize:
-                    connectionLine = new GeneralizationLine(_startObjetct, _endObject);
+                    connectionLine = new GeneralizationLine(startPort, endPort);
                     break;
                 default:
                     return;
             }
-
-            var startPoint = _startObjetct.StartPoint;
-            var endPoint = _endObject.StartPoint;
-            var x = startPoint.X + ((endPoint.X - startPoint.X) > 0 ? +5 : -5);
-            var y = startPoint.Y + ((endPoint.X - startPoint.X) > 0 ? -5 : +5);
-            Canvas.SetLeft(connectionLine, x);
-            Canvas.SetTop(connectionLine, y);
+            
+            Canvas.SetLeft(connectionLine, startPort.X);
+            Canvas.SetTop(connectionLine, startPort.Y-15);
 
             DiagramCanvas.Children.Add(connectionLine);
             _lineFlag = false;
+        }
+
+        private Point GetNearestPort(Point point, IBaseObject baseObject)
+        {
+            var topDistance = CalculateTwoPointsDistance(point, baseObject.TopPoint);
+            var rightDistance = CalculateTwoPointsDistance(point, baseObject.RightPoint);
+            var bottomDistance = CalculateTwoPointsDistance(point, baseObject.BottomPoint);
+            var leftDistance = CalculateTwoPointsDistance(point, baseObject.LeftPoint);
+
+            var numbers = new [] { topDistance, rightDistance, bottomDistance, leftDistance };
+            var minimumNumber = numbers.Min();
+
+            if (Math.Abs(topDistance - minimumNumber) < 0.001)
+            {
+                return baseObject.TopPoint;
+            }
+
+            if (Math.Abs(rightDistance - minimumNumber) < 0.001)
+            {
+                return baseObject.RightPoint;
+            }
+
+            if (Math.Abs(bottomDistance - minimumNumber) < 0.001)
+            {
+                return baseObject.BottomPoint;
+            }
+
+            return baseObject.LeftPoint;
+        }
+
+        private double CalculateTwoPointsDistance(Point aPoint, Point bPoint)
+        {
+            var xDiff = aPoint.X - bPoint.X;
+            var yDiff = aPoint.Y - bPoint.Y;
+            return Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
         }
 
         /// <summary>

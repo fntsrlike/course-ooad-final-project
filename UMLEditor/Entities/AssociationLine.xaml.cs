@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Media;
 
 namespace UMLEditort.Entities
@@ -8,20 +9,14 @@ namespace UMLEditort.Entities
     /// </summary>
     public partial class AssociationLine
     {
-        private const int ArrowEndpointHeight = 0;
-
-        public AssociationLine(IBaseObject from, IBaseObject to) : base(from, to)
+        public AssociationLine(Point from, Point to) : base(from, to)
         {
             InitializeComponent();
-            var startPoint = From.StartPoint;
-            var endPoint = To.StartPoint;
-            var xDiff = endPoint.X - startPoint.X;
-            var yDiff = endPoint.Y - startPoint.Y;
-            var angle = Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
+            ArrowEndpointHeight = 0;
 
             ArrowLine.X1 = ArrowEndpointHeight;
-            ArrowLine.X2 = Math.Sqrt(xDiff*xDiff + yDiff*yDiff);
-            ArrowCanvas.RenderTransform = new RotateTransform(angle);
+            ArrowLine.X2 = LineLenght;
+            ArrowCanvas.RenderTransform = new RotateTransform(Angle);
         }
     }
 }

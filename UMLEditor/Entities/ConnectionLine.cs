@@ -1,16 +1,26 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace UMLEditort.Entities
 {
-    public abstract class ConnectionLine : UserControl
+    public class ConnectionLine : UserControl
     {
-        protected ConnectionLine(IBaseObject from, IBaseObject to)
+        protected ConnectionLine(Point startPort, Point endPort)
         {
-            From = from;
-            To = to;
+            StartPort = startPort;
+            EndPort = endPort;
         }
 
-        public IBaseObject From { get; }
-        public IBaseObject To { get; }
+        protected int ArrowEndpointHeight;
+
+        public Point StartPort { get; }
+        public Point EndPort { get; }
+
+
+        protected double XDiff => EndPort.X - StartPort.X;
+        protected double YDiff => EndPort.Y - StartPort.Y;
+        protected double Angle => Math.Atan2(YDiff, XDiff) * 180.0 / Math.PI;
+        protected double LineLenght => Math.Sqrt(XDiff * XDiff + YDiff * YDiff);
     }
 }
