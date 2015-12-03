@@ -513,7 +513,7 @@ namespace UMLEditort
             {
                 var rect = baseObject.GetRect();
 
-                if (selectedArea.IntersectsWith(rect))
+                if (selectedArea.Contains(rect))
                 {
                     if (baseObject.Compositer == null)
                     {
