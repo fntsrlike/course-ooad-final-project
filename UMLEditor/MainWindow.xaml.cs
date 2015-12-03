@@ -19,12 +19,15 @@ namespace UMLEditort
         private bool _lineFlag;
         private Point _startPoint;
         private Point _endPoint;
-        private IBaseObject _startObjetct;
-        private IBaseObject _endObject;
+        private BaseObject _startObjetct;
+        private BaseObject _endObject;
         private ISelectableObject _selectedObject;
         private readonly List<ISelectableObject> _selectedRelativeObjects;        
         private int _objectCounter;
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -32,37 +35,72 @@ namespace UMLEditort
             _objectCounter = 0;
         }
 
+        /// <summary>
+        /// Select 模式按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Select ? Modes.Undefined : Modes.Select;
             
         }
 
+        /// <summary>
+        /// Associate Line 模式按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AssociateButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Associate ? Modes.Undefined : Modes.Associate;
         }
 
+        /// <summary>
+        /// Generalize Line 模式按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GeneralizeButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Generalize ? Modes.Undefined : Modes.Generalize;
         }
 
+        /// <summary>
+        /// Composition Line 模式按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CompositionButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Composition ? Modes.Undefined : Modes.Composition;
         }
 
+        /// <summary>
+        /// 插入 Class 模式按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClassButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.Class ? Modes.Undefined : Modes.Class;
         }
 
+        /// <summary>
+        /// 插入 UseCase 模式按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UseCaseButton_Click(object sender, RoutedEventArgs e)
         {
             _vm.Mode = _vm.Mode == Modes.UseCase ? Modes.Undefined : Modes.UseCase;
         }
 
+        /// <summary>
+        /// 在畫布上按下滑鼠的事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DiagramCanvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             
@@ -114,7 +152,7 @@ namespace UMLEditort
             // 連線模式
             else if (_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize)
             {
-                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+                foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
                     _lineFlag = true;
                     _startObjetct = baseObject;
@@ -128,7 +166,7 @@ namespace UMLEditort
                 _pressingFlag = true;
 
                 // Move Action
-                if (_selectedRelativeObjects.Select(selectedObject => selectedObject as IBaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
+                if (_selectedRelativeObjects.Select(selectedObject => selectedObject as BaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
                 {
                     return;
                 }
@@ -143,7 +181,7 @@ namespace UMLEditort
                 ChangeObjectName.IsEnabled = false;
 
                 // Select
-                foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+                foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
                     _selectedObject = baseObject;
                     ChangeObjectName.IsEnabled = true;
@@ -166,6 +204,11 @@ namespace UMLEditort
 
         }
 
+        /// <summary>
+        /// 在畫布上按下滑鼠後鬆開的事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DiagramCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var point = e.GetPosition(DiagramCanvas);
@@ -184,6 +227,11 @@ namespace UMLEditort
             }
         }
 
+        /// <summary>
+        /// Group 按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Debug.Assert(_selectedRelativeObjects.Count > 1);
@@ -223,6 +271,11 @@ namespace UMLEditort
             UnGroupMenuItem.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Ungroup 按鈕點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UnGroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Debug.Assert(_selectedRelativeObjects.Count > 1);
@@ -246,7 +299,7 @@ namespace UMLEditort
         /// <param name="point"></param>
         private void LineModeMouseUp(Point point)
         {
-            foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
+            foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
             {
                 _endObject = baseObject;
                 break;
@@ -271,6 +324,12 @@ namespace UMLEditort
             }
         }
 
+        /// <summary>
+        /// 根據參數畫線
+        /// </summary>
+        /// <param name="startArgs"></param>
+        /// <param name="endArgs"></param>
+        /// <param name="mode"></param>
         private void DrawLine(ConnectionArgs startArgs, ConnectionArgs endArgs, Modes mode)
         {
             ConnectionLine connectionLine;
@@ -297,31 +356,41 @@ namespace UMLEditort
             _lineFlag = false;
         }
 
+        /// <summary>
+        /// 重劃指定的關係線
+        /// </summary>
+        /// <param name="line"></param>
         private void RedrawLine(ConnectionLine line)
         {
-            Modes _lindType;
+            Modes lindType;
 
             if (line is AssociationLine)
             {
-                _lindType = Modes.Associate;
+                lindType = Modes.Associate;
             }
             else if (line is GeneralizationLine)
             {
-                _lindType = Modes.Generalize;
+                lindType = Modes.Generalize;
             }
             else if (line is CompositionLine)
             {
-                _lindType = Modes.Composition;
+                lindType = Modes.Composition;
             }
             else
             {
                 throw new ArgumentOutOfRangeException();
             }
-            DrawLine(line.StartConnectionArgs, line.EndConnectionArgs, _lindType);
+            DrawLine(line.StartConnectionArgs, line.EndConnectionArgs, lindType);
             DiagramCanvas.Children.Remove(line);
         }
 
-        private Ports GetNearestPort(Point point, IBaseObject baseObject)
+        /// <summary>
+        /// 取得某點在某物件上最近的 Port
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="baseObject"></param>
+        /// <returns></returns>
+        private Ports GetNearestPort(Point point, BaseObject baseObject)
         {
             var topDistance = CalculateTwoPointsDistance(point, baseObject.TopPoint);
             var rightDistance = CalculateTwoPointsDistance(point, baseObject.RightPoint);
@@ -349,6 +418,12 @@ namespace UMLEditort
             return Ports.Left;
         }
 
+        /// <summary>
+        /// 計算兩點之間的距離
+        /// </summary>
+        /// <param name="aPoint"></param>
+        /// <param name="bPoint"></param>
+        /// <returns></returns>
         private double CalculateTwoPointsDistance(Point aPoint, Point bPoint)
         {
             var xDiff = aPoint.X - bPoint.X;
@@ -383,6 +458,9 @@ namespace UMLEditort
             CheckGroupMenuItemIsEnabled();
         }
 
+        /// <summary>
+        /// 確認 Group/Ungroup 按鈕是否被啟用
+        /// </summary>
         private void CheckGroupMenuItemIsEnabled()
         {
             // 確認是否可以 GROUP
@@ -417,6 +495,10 @@ namespace UMLEditort
             UnGroupMenuItem.IsEnabled = ungroupFlag;
         }
 
+        /// <summary>
+        /// 區域選取
+        /// </summary>
+        /// <param name="point"></param>
         private void SelectAreaAction(Point point)
         {
             var width = point.X - _startPoint.X;
@@ -427,7 +509,7 @@ namespace UMLEditort
             var rectSize = new Size(Math.Abs(width), Math.Abs(height));
             var selectedArea = new Rect(rectPoint, rectSize);
 
-            foreach (var baseObject in DiagramCanvas.Children.OfType<IBaseObject>())
+            foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>())
             {
                 var rect = baseObject.GetRect();
 
@@ -448,12 +530,17 @@ namespace UMLEditort
             }
         }
 
+        /// <summary>
+        /// 移動物件
+        /// </summary>
+        /// <param name="displacementX"></param>
+        /// <param name="displacementY"></param>
         private void MoveAction(double displacementX, double displacementY)
         {
             foreach (var selectedObject in _selectedRelativeObjects)
             {
                 var userControl = selectedObject as UserControl;
-                var baseObject = selectedObject as IBaseObject;
+                var baseObject = selectedObject as BaseObject;
                 Debug.Assert(userControl != null);
                 Debug.Assert(baseObject != null);
 
@@ -483,6 +570,11 @@ namespace UMLEditort
             }
         }
 
+        /// <summary>
+        /// 改變物件名稱按鈕的點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChangeObjectName_Click(object sender, RoutedEventArgs e)
         {
             Debug.Assert(_selectedObject != null);

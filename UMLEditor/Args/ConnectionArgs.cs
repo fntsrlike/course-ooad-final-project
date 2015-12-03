@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using UMLEditort.Entities;
 
@@ -6,22 +7,39 @@ namespace UMLEditort.Args
 {
     public class ConnectionArgs
     {
-        public IBaseObject TargetObject
+        public ConnectionArgs()
+        {
+            TargetPort = Ports.Undefined;
+        }
+
+        /// <summary>
+        /// 基本物件
+        /// </summary>
+        public BaseObject TargetObject
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// 對應的 Port
+        /// </summary>
         public Ports TargetPort
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// 根據
+        /// </summary>
         public Point TargetPoint
         {
             get
-            {
+            {   
+                Debug.Assert(TargetObject != null && TargetPort != Ports.Undefined);
+
+                // ReSharper disable once SwitchStatementMissingSomeCases
                 switch (TargetPort)
                 {
                     case Ports.Top:
@@ -35,7 +53,7 @@ namespace UMLEditort.Args
 
                     case Ports.Left:
                         return TargetObject.LeftPoint;
-
+                        
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

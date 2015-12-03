@@ -5,7 +5,7 @@ namespace UMLEditort
 {
     class ViewModel : INotifyPropertyChanged
     {
-        private Modes _mode = Modes.Undefined;
+        private Modes _mode;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -14,6 +14,9 @@ namespace UMLEditort
             _mode = Modes.Undefined;
         }
 
+        /// <summary>
+        /// 目前使用者的操作模式
+        /// </summary>
         public Modes Mode
         {
             set
@@ -35,6 +38,7 @@ namespace UMLEditort
             get { return _mode; }
         }
 
+        // 筆刷
         public SolidColorBrush SelectBtnBackColor => Mode == Modes.Select ? Brushes.Black : Brushes.White;
         public SolidColorBrush SelectBtnForeColor => Mode == Modes.Select ? Brushes.White : Brushes.Black;
         public SolidColorBrush AssociateBtnBackColor => Mode == Modes.Associate ? Brushes.Black : Brushes.White;
@@ -48,6 +52,15 @@ namespace UMLEditort
         public SolidColorBrush UseCaseBtnBackColor => Mode == Modes.UseCase ? Brushes.Black : Brushes.White;
         public SolidColorBrush UseCaseBtnForeColor => Mode == Modes.UseCase ? Brushes.White : Brushes.Black;
 
+        public bool GroupMeniItemIsEnalbed
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// 用來做 Binding 
+        /// </summary>
+        /// <param name="propName"></param>
         public void NotifyPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
