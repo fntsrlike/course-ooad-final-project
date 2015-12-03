@@ -204,6 +204,17 @@ namespace UMLEditort
 
         }
 
+        private void CleanSelectedObjects()
+        {
+            foreach (var baseObject in _selectedRelativeObjects)
+            {
+                baseObject.Selected = false;
+            }
+            _selectedRelativeObjects.Clear();
+            _selectedObject = null;
+            ChangeObjectName.IsEnabled = false;
+        }
+
         /// <summary>
         /// 在畫布上按下滑鼠後鬆開的事件
         /// </summary>
@@ -348,9 +359,41 @@ namespace UMLEditort
                 default:
                     return;
             }
+             
+            var angle = connectionLine.Angle%360 + 360;
+            var d = (long) angle/90;
+
+            double xDiff = 0.0;
+            double yDiff = 0.0;
+
+            d = d%4;
+            var e = Math.Abs(angle%90)/90;
+
+            switch (d)
+            {
+                case 0:
+                    xDiff = e;
+                    yDiff = e - 1;
+                    break;
+
+                case 1:
+                    xDiff = 1 - e;
+                    yDiff = e;
+                    break;
+
+                case 2:
+                    xDiff = - e;
+                    yDiff = 1 - e;
+                    break;
+
+                case 3:
+                    xDiff = e - 1;
+                    yDiff = -e;
+                    break;
+            }
             
-            Canvas.SetLeft(connectionLine, startArgs.TargetPoint.X);
-            Canvas.SetTop(connectionLine, startArgs.TargetPoint.Y-15);
+            Canvas.SetLeft(connectionLine, startArgs.TargetPoint.X + xDiff *15);
+            Canvas.SetTop(connectionLine, startArgs.TargetPoint.Y + yDiff * 15);
 
             DiagramCanvas.Children.Add(connectionLine);
             _lineFlag = false;

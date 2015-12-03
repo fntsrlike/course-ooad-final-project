@@ -53,7 +53,7 @@ namespace UMLEditort.Entities
         /// <summary>
         /// 整個線應該選轉的角度
         /// </summary>
-        protected double Angle => Math.Atan2(YDiff, XDiff) * 180.0 / Math.PI;
+        public double Angle => Math.Atan2(YDiff, XDiff) * 180.0 / Math.PI;
 
         /// <summary>
         /// 整個線的長度的長度，等於StartPort 和 EndPort 兩點間的位移
