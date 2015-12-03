@@ -98,7 +98,6 @@
     <Compile Include="Entities\CompositionLine.xaml.cs">
       <DependentUpon>CompositionLine.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Entities\IBaseObject.cs" />
     <Compile Include="Entities\ISelectableObject.cs" />
     <Compile Include="Entities\UseCaseObject.xaml.cs">
       <DependentUpon>UseCaseObject.xaml</DependentUpon>
