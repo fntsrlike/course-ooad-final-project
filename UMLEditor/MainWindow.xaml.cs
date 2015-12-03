@@ -42,8 +42,8 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
+            CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Select ? Modes.Undefined : Modes.Select;
-            
         }
 
         /// <summary>
@@ -53,6 +53,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void AssociateButton_Click(object sender, RoutedEventArgs e)
         {
+            CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Associate ? Modes.Undefined : Modes.Associate;
         }
 
@@ -63,6 +64,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void GeneralizeButton_Click(object sender, RoutedEventArgs e)
         {
+            CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Generalize ? Modes.Undefined : Modes.Generalize;
         }
 
@@ -73,6 +75,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void CompositionButton_Click(object sender, RoutedEventArgs e)
         {
+            CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Composition ? Modes.Undefined : Modes.Composition;
         }
 
@@ -83,6 +86,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void ClassButton_Click(object sender, RoutedEventArgs e)
         {
+            CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Class ? Modes.Undefined : Modes.Class;
         }
 
@@ -93,6 +97,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void UseCaseButton_Click(object sender, RoutedEventArgs e)
         {
+            CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.UseCase ? Modes.Undefined : Modes.UseCase;
         }
 
@@ -103,8 +108,6 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void DiagramCanvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            
-
             var point = e.GetPosition(DiagramCanvas);
             _startPoint = point;
             _endPoint = _startPoint;
@@ -114,6 +117,8 @@ namespace UMLEditort
             // 插入 Class 模式
             if (_vm.Mode == Modes.Class)
             {
+                CleanSelectedObjects();
+
                 var baseObject = new ClassObject($"#{_objectCounter} Class Object")
                 {
                     Width = 150,
@@ -126,6 +131,7 @@ namespace UMLEditort
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
                 _selectedObject = baseObject;
+                _selectedRelativeObjects.Add(baseObject);
                 ChangeObjectName.IsEnabled = true;
                 _objectCounter++;
             }
@@ -133,6 +139,8 @@ namespace UMLEditort
             // 插入 Use Case 模式
             else if (_vm.Mode == Modes.UseCase)
             {
+                CleanSelectedObjects();
+
                 var baseObject = new UseCaseObject($"#{_objectCounter} Use Case Object")
                 {
                     Width = 150,
@@ -145,6 +153,7 @@ namespace UMLEditort
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
                 _selectedObject = baseObject;
+                _selectedRelativeObjects.Add(baseObject);
                 ChangeObjectName.IsEnabled = true;
                 _objectCounter++;
             }
@@ -171,14 +180,7 @@ namespace UMLEditort
                     return;
                 }
 
-                // Cancle origin selected
-                foreach (var baseObject in _selectedRelativeObjects)
-                {
-                    baseObject.Selected = false;
-                }
-                _selectedRelativeObjects.Clear();
-                _selectedObject = null;
-                ChangeObjectName.IsEnabled = false;
+                CleanSelectedObjects();
 
                 // Select
                 foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
@@ -631,7 +633,7 @@ namespace UMLEditort
                 Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
-
+            
             if (dialog.ShowDialog() == true)
             {
                 baseObject.ObjectName = dialog.ObjectName;
