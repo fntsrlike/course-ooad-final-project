@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using UMLEditort.Args;
 using UMLEditort.Dialogs;
 using UMLEditort.Entities;
 

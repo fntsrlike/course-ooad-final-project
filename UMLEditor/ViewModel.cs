@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Media;
 using UMLEditort.Entities;
@@ -8,15 +7,17 @@ namespace UMLEditort
 {
     class ViewModel : INotifyPropertyChanged
     {
-        private Modes _mode;
-
         public event PropertyChangedEventHandler PropertyChanged;
+        private Modes _mode;
 
         public ViewModel()
         {
             Mode = Modes.Undefined;
             DiagramCanvas = new DiagramCanvas();
             DiagramCanvas.SelectedRelativeObjects.CollectionChanged += SelectedRelativeObjectsChanged;
+            DiagramCanvas.SelectedObjectChanged += delegate {
+                NotifyPropertyChanged("CanChangeObjectName");
+            };
         }
 
         /// <summary>
@@ -28,8 +29,8 @@ namespace UMLEditort
             {
                 if (_mode == value) return;
 
-                DiagramCanvas.Mode = value;
                 _mode = value;
+                DiagramCanvas.Mode = value;
                 DiagramCanvas.CleanSelectedObjects();
                 NotifyPropertyChanged("SelectBtnBackColor");
                 NotifyPropertyChanged("SelectBtnForeColor");
@@ -68,7 +69,26 @@ namespace UMLEditort
         public SolidColorBrush ClassBtnForeColor => Mode == Modes.Class ? Brushes.White : Brushes.Black;
         public SolidColorBrush UseCaseBtnBackColor => Mode == Modes.UseCase ? Brushes.Black : Brushes.White;
         public SolidColorBrush UseCaseBtnForeColor => Mode == Modes.UseCase ? Brushes.White : Brushes.Black;
-        
+
+        /// <summary>
+        /// Group 畫布中的 BaseObjects
+        /// </summary>
+        public void Group()
+        {
+            DiagramCanvas.Group();
+        }
+
+        /// <summary>
+        /// UnGroup 畫布中的 BaseObjects
+        /// </summary>
+        public void UnGroup()
+        {
+            DiagramCanvas.UnGroup();
+        }
+
+        /// <summary>
+        /// 確認選取的 BaseObjects 裡，是否所有 BaseObjects 的最外層 Compositer 都是一樣的
+        /// </summary>
         private bool CheckIfSelectedRelativeObjectsCompositorIsSame()
         {
             var isSame = false;
@@ -88,17 +108,12 @@ namespace UMLEditort
 
             return isSame;
         }
-        
-        public void Group()
-        {
-            DiagramCanvas.Group();
-        }
 
-        public void UnGroup()
-        {
-            DiagramCanvas.UnGroup();
-        }
-
+        /// <summary>
+        /// 選取的 BaseObjects 發生改變
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SelectedRelativeObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             NotifyPropertyChanged("IsGroupEnabled");
