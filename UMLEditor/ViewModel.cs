@@ -60,10 +60,22 @@ namespace UMLEditort
         public BaseObject StartObject { get; set; }
         public BaseObject EndObject { get; set; }
         public ISelectableObject SelectedObject { get; set; }
-        public List<ISelectableObject> SelectedRelativeObject { get; set; }
+        public List<ISelectableObject> SelectedRelativeObjects { get; set; }
         public bool PressingFlag { get; set; }
         public bool LineFlag { get; set; }
         public int ObjectCounter { get; set; }
+
+        public bool CanChangeObjectName => SelectedObject != null;
+
+        public void CleanSelectedObjects()
+        {
+            foreach (var baseObject in SelectedRelativeObjects)
+            {
+                baseObject.Selected = false;
+            }
+            SelectedRelativeObjects.Clear();
+            SelectedObject = null;
+        }
 
         /// <summary>
         /// 用來做 Binding 

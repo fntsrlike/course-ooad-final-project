@@ -32,7 +32,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-            CleanSelectedObjects();
+            _vm.CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Select ? Modes.Undefined : Modes.Select;
         }
 
@@ -43,7 +43,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void AssociateButton_Click(object sender, RoutedEventArgs e)
         {
-            CleanSelectedObjects();
+            _vm.CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Associate ? Modes.Undefined : Modes.Associate;
         }
 
@@ -54,7 +54,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void GeneralizeButton_Click(object sender, RoutedEventArgs e)
         {
-            CleanSelectedObjects();
+            _vm.CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Generalize ? Modes.Undefined : Modes.Generalize;
         }
 
@@ -65,7 +65,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void CompositionButton_Click(object sender, RoutedEventArgs e)
         {
-            CleanSelectedObjects();
+            _vm.CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Composition ? Modes.Undefined : Modes.Composition;
         }
 
@@ -76,7 +76,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void ClassButton_Click(object sender, RoutedEventArgs e)
         {
-            CleanSelectedObjects();
+            _vm.CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.Class ? Modes.Undefined : Modes.Class;
         }
 
@@ -87,7 +87,7 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void UseCaseButton_Click(object sender, RoutedEventArgs e)
         {
-            CleanSelectedObjects();
+            _vm.CleanSelectedObjects();
             _vm.Mode = _vm.Mode == Modes.UseCase ? Modes.Undefined : Modes.UseCase;
         }
 
@@ -107,7 +107,7 @@ namespace UMLEditort
             // 插入 Class 模式
             if (_vm.Mode == Modes.Class)
             {
-                CleanSelectedObjects();
+                _vm.CleanSelectedObjects();
 
                 var baseObject = new ClassObject($"#{_vm.ObjectCounter} Class Object")
                 {
@@ -122,14 +122,13 @@ namespace UMLEditort
                 DiagramCanvas.Children.Add(baseObject);
                 _vm.SelectedObject = baseObject;
                 _vm.SelectedRelativeObjects.Add(baseObject);
-                ChangeObjectName.IsEnabled = true;
                 _vm.ObjectCounter++;
             }
 
             // 插入 Use Case 模式
             else if (_vm.Mode == Modes.UseCase)
             {
-                CleanSelectedObjects();
+                _vm.CleanSelectedObjects();
 
                 var baseObject = new UseCaseObject($"#{_vm.ObjectCounter} Use Case Object")
                 {
@@ -144,7 +143,6 @@ namespace UMLEditort
                 DiagramCanvas.Children.Add(baseObject);
                 _vm.SelectedObject = baseObject;
                 _vm.SelectedRelativeObjects.Add(baseObject);
-                ChangeObjectName.IsEnabled = true;
                 _vm.ObjectCounter++;
             }
 
@@ -170,13 +168,12 @@ namespace UMLEditort
                     return;
                 }
 
-                CleanSelectedObjects();
+                _vm.CleanSelectedObjects();
 
                 // Select
                 foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
                     _vm.SelectedObject = baseObject;
-                    ChangeObjectName.IsEnabled = true;
 
                     if (baseObject.GetOutermostCompositer() != null)
                     {
@@ -196,16 +193,7 @@ namespace UMLEditort
 
         }
 
-        private void CleanSelectedObjects()
-        {
-            foreach (var baseObject in _vm.SelectedRelativeObjects)
-            {
-                baseObject.Selected = false;
-            }
-            _vm.SelectedRelativeObjects.Clear();
-            _vm.SelectedObject = null;
-            ChangeObjectName.IsEnabled = false;
-        }
+       
 
         /// <summary>
         /// 在畫布上按下滑鼠後鬆開的事件
