@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UMLEditort"
+        xmlns:entities="clr-namespace:UMLEditort.Entities"
         mc:Ignorable="d"
         Title="UMLEditor" Width="960" Height="720">
     <Window.DataContext>
@@ -19,8 +20,8 @@
             <Menu x:Name="Menu" DockPanel.Dock="Top">
                 <MenuItem Header="_File"></MenuItem>
                 <MenuItem Header="_Edit">
-                    <MenuItem x:Name="GroupMenuItem" Header="Group" HorizontalAlignment="Left" IsEnabled="False" Click="GroupMenuItem_Click"/>
-                    <MenuItem x:Name="UnGroupMenuItem" Header="UnGroup" HorizontalAlignment="Left" IsEnabled="False" Click="UnGroupMenuItem_Click"/>
+                    <MenuItem x:Name="GroupMenuItem" Header="Group" HorizontalAlignment="Left" IsEnabled="{Binding IsGroupEnabled}" Click="GroupMenuItem_Click"/>
+                    <MenuItem x:Name="UnGroupMenuItem" Header="UnGroup" HorizontalAlignment="Left" IsEnabled="{Binding IsUnGroupEnabled}" Click="UnGroupMenuItem_Click"/>
                     <MenuItem x:Name="ChangeObjectName" Header="Change object name" HorizontalAlignment="Left" IsEnabled="{Binding CanChangeObjectName}" Click="ChangeObjectName_Click" />
                 </MenuItem>
             </Menu>
@@ -61,8 +62,8 @@
                 </DockPanel>
             </Grid>
             <Grid Grid.Column="1">
-                <DockPanel>
-                    <Canvas x:Name="DiagramCanvas" MouseDown="DiagramCanvas_MouseDown" Background="RoyalBlue" MouseUp="DiagramCanvas_MouseUp"/>
+                <DockPanel x:Name="CanvasPanel" Background="RoyalBlue">
+                    
                 </DockPanel>
             </Grid>
         </Grid>

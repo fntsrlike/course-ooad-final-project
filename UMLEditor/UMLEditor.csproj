@@ -89,6 +89,7 @@
     <Compile Include="Entities\ClassObject.xaml.cs">
       <DependentUpon>ClassObject.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\DiagramCanvas.cs" />
     <Compile Include="Entities\GeneralizationLine.xaml.cs">
       <DependentUpon>GeneralizationLine.xaml</DependentUpon>
     </Compile>

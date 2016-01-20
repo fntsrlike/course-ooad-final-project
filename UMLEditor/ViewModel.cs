@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Media;
 using UMLEditort.Entities;
 
@@ -14,7 +14,9 @@ namespace UMLEditort
 
         public ViewModel()
         {
-            _mode = Modes.Undefined;
+            Mode = Modes.Undefined;
+            DiagramCanvas = new DiagramCanvas();
+            DiagramCanvas.SelectedRelativeObjects.CollectionChanged += SelectedRelativeObjectsChanged;
         }
 
         /// <summary>
@@ -24,7 +26,11 @@ namespace UMLEditort
         {
             set
             {
+                if (_mode == value) return;
+
+                DiagramCanvas.Mode = value;
                 _mode = value;
+                DiagramCanvas.CleanSelectedObjects();
                 NotifyPropertyChanged("SelectBtnBackColor");
                 NotifyPropertyChanged("SelectBtnForeColor");
                 NotifyPropertyChanged("AssociateBtnBackColor");
@@ -41,7 +47,15 @@ namespace UMLEditort
             get { return _mode; }
         }
 
-        // 筆刷
+        // 基本屬性
+        public DiagramCanvas DiagramCanvas { get; set; }
+
+        // 啟用屬性
+        public bool CanChangeObjectName => DiagramCanvas.SelectedObject != null;
+        public bool IsGroupEnabled => (DiagramCanvas.SelectedRelativeObjects.Count > 1) && !CheckIfSelectedRelativeObjectsCompositorIsSame();
+        public bool IsUnGroupEnabled => (DiagramCanvas.SelectedRelativeObjects.Count > 1) && CheckIfSelectedRelativeObjectsCompositorIsSame();
+
+        // 筆刷屬性
         public SolidColorBrush SelectBtnBackColor => Mode == Modes.Select ? Brushes.Black : Brushes.White;
         public SolidColorBrush SelectBtnForeColor => Mode == Modes.Select ? Brushes.White : Brushes.Black;
         public SolidColorBrush AssociateBtnBackColor => Mode == Modes.Associate ? Brushes.Black : Brushes.White;
@@ -54,27 +68,41 @@ namespace UMLEditort
         public SolidColorBrush ClassBtnForeColor => Mode == Modes.Class ? Brushes.White : Brushes.Black;
         public SolidColorBrush UseCaseBtnBackColor => Mode == Modes.UseCase ? Brushes.Black : Brushes.White;
         public SolidColorBrush UseCaseBtnForeColor => Mode == Modes.UseCase ? Brushes.White : Brushes.Black;
-
-        public Point StartPoint { get; set; }
-        public Point EndPoint { get; set; }
-        public BaseObject StartObject { get; set; }
-        public BaseObject EndObject { get; set; }
-        public ISelectableObject SelectedObject { get; set; }
-        public List<ISelectableObject> SelectedRelativeObjects { get; set; }
-        public bool PressingFlag { get; set; }
-        public bool LineFlag { get; set; }
-        public int ObjectCounter { get; set; }
-
-        public bool CanChangeObjectName => SelectedObject != null;
-
-        public void CleanSelectedObjects()
+        
+        private bool CheckIfSelectedRelativeObjectsCompositorIsSame()
         {
-            foreach (var baseObject in SelectedRelativeObjects)
+            var isSame = false;
+
+            // 取得作為標準 Compositer
+            var compositer = DiagramCanvas.SelectedRelativeObjects[0].GetOutermostCompositer();
+
+            if (compositer == null) return false;
+            foreach (var selectedObject in DiagramCanvas.SelectedRelativeObjects)
             {
-                baseObject.Selected = false;
+                isSame = compositer.Equals(selectedObject.GetOutermostCompositer());
+                if (!isSame)
+                {
+                    break;
+                }
             }
-            SelectedRelativeObjects.Clear();
-            SelectedObject = null;
+
+            return isSame;
+        }
+        
+        public void Group()
+        {
+            DiagramCanvas.Group();
+        }
+
+        public void UnGroup()
+        {
+            DiagramCanvas.UnGroup();
+        }
+
+        private void SelectedRelativeObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            NotifyPropertyChanged("IsGroupEnabled");
+            NotifyPropertyChanged("IsUnGroupEnabled");
         }
 
         /// <summary>
