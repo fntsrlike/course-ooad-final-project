@@ -15,24 +15,14 @@ namespace UMLEditort
     /// </summary>
     public partial class MainWindow
     {
-        private bool _pressingFlag;
-        private bool _lineFlag;
-        private Point _startPoint;
-        private Point _endPoint;
-        private BaseObject _startObjetct;
-        private BaseObject _endObject;
-        private ISelectableObject _selectedObject;
-        private readonly List<ISelectableObject> _selectedRelativeObjects;        
-        private int _objectCounter;
-
         /// <summary>
         /// 初始化
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
-            _selectedRelativeObjects = new List<ISelectableObject>();
-            _objectCounter = 0;
+            _vm.SelectedRelativeObjects = new List<ISelectableObject>();
+            _vm.ObjectCounter = 0;
         }
 
         /// <summary>
@@ -109,17 +99,17 @@ namespace UMLEditort
         private void DiagramCanvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var point = e.GetPosition(DiagramCanvas);
-            _startPoint = point;
-            _endPoint = _startPoint;
-            _startObjetct = null;
-            _endObject = null;
+            _vm.StartPoint = point;
+            _vm.EndPoint = _vm.StartPoint;
+            _vm.StartObject = null;
+            _vm.EndObject = null;
 
             // 插入 Class 模式
             if (_vm.Mode == Modes.Class)
             {
                 CleanSelectedObjects();
 
-                var baseObject = new ClassObject($"#{_objectCounter} Class Object")
+                var baseObject = new ClassObject($"#{_vm.ObjectCounter} Class Object")
                 {
                     Width = 150,
                     Height = 100
@@ -130,10 +120,10 @@ namespace UMLEditort
 
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
-                _selectedObject = baseObject;
-                _selectedRelativeObjects.Add(baseObject);
+                _vm.SelectedObject = baseObject;
+                _vm.SelectedRelativeObjects.Add(baseObject);
                 ChangeObjectName.IsEnabled = true;
-                _objectCounter++;
+                _vm.ObjectCounter++;
             }
 
             // 插入 Use Case 模式
@@ -141,7 +131,7 @@ namespace UMLEditort
             {
                 CleanSelectedObjects();
 
-                var baseObject = new UseCaseObject($"#{_objectCounter} Use Case Object")
+                var baseObject = new UseCaseObject($"#{_vm.ObjectCounter} Use Case Object")
                 {
                     Width = 150,
                     Height = 100
@@ -152,10 +142,10 @@ namespace UMLEditort
 
                 baseObject.StartPoint = point;
                 DiagramCanvas.Children.Add(baseObject);
-                _selectedObject = baseObject;
-                _selectedRelativeObjects.Add(baseObject);
+                _vm.SelectedObject = baseObject;
+                _vm.SelectedRelativeObjects.Add(baseObject);
                 ChangeObjectName.IsEnabled = true;
-                _objectCounter++;
+                _vm.ObjectCounter++;
             }
 
             // 連線模式
@@ -163,8 +153,8 @@ namespace UMLEditort
             {
                 foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
-                    _lineFlag = true;
-                    _startObjetct = baseObject;
+                    _vm.LineFlag = true;
+                    _vm.StartObject = baseObject;
                     break;
                 }
             }
@@ -172,10 +162,10 @@ namespace UMLEditort
             // 選取模式
             else if (_vm.Mode == Modes.Select)
             {
-                _pressingFlag = true;
+                _vm.PressingFlag = true;
 
                 // Move Action
-                if (_selectedRelativeObjects.Select(selectedObject => selectedObject as BaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
+                if (_vm.SelectedRelativeObjects.Select(selectedObject => selectedObject as BaseObject).Any(baseObject => baseObject.IsContainPoint(point)))
                 {
                     return;
                 }
@@ -185,7 +175,7 @@ namespace UMLEditort
                 // Select
                 foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
                 {
-                    _selectedObject = baseObject;
+                    _vm.SelectedObject = baseObject;
                     ChangeObjectName.IsEnabled = true;
 
                     if (baseObject.GetOutermostCompositer() != null)
@@ -194,12 +184,12 @@ namespace UMLEditort
 
                         compositer.Selected = true;
                         var members = compositer.GetAllBaseObjects();
-                        _selectedRelativeObjects.AddRange(members);
+                        _vm.SelectedRelativeObjects.AddRange(members);
                     }
                     else
                     {
                         baseObject.Selected = true;
-                        _selectedRelativeObjects.Add(baseObject);
+                        _vm.SelectedRelativeObjects.Add(baseObject);
                     }
                 }
             }
@@ -208,12 +198,12 @@ namespace UMLEditort
 
         private void CleanSelectedObjects()
         {
-            foreach (var baseObject in _selectedRelativeObjects)
+            foreach (var baseObject in _vm.SelectedRelativeObjects)
             {
                 baseObject.Selected = false;
             }
-            _selectedRelativeObjects.Clear();
-            _selectedObject = null;
+            _vm.SelectedRelativeObjects.Clear();
+            _vm.SelectedObject = null;
             ChangeObjectName.IsEnabled = false;
         }
 
@@ -225,16 +215,16 @@ namespace UMLEditort
         private void DiagramCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var point = e.GetPosition(DiagramCanvas);
-            _endPoint = point;
+            _vm.EndPoint = point;
 
             // 連線模式
-            if ((_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize) && _lineFlag)
+            if ((_vm.Mode == Modes.Associate || _vm.Mode == Modes.Composition || _vm.Mode == Modes.Generalize) && _vm.LineFlag)
             {
                 LineModeMouseUp(point);
             }
 
             // 選取模式
-            else if (_vm.Mode == Modes.Select && _pressingFlag)
+            else if (_vm.Mode == Modes.Select && _vm.PressingFlag)
             {
                 SelectModeMouseUp(point);
             }
@@ -247,12 +237,12 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void GroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(_selectedRelativeObjects.Count > 1);
+            Debug.Assert(_vm.SelectedRelativeObjects.Count > 1);
 
-            var baseObjectWithoutGroup = _selectedRelativeObjects.Where(selectObject => selectObject.Compositer == null).ToList();
+            var baseObjectWithoutGroup = _vm.SelectedRelativeObjects.Where(selectObject => selectObject.Compositer == null).ToList();
             var compositeObjects = new List<ISelectableObject>();
 
-            foreach (var selectObject in _selectedRelativeObjects.Where(selectObject => selectObject.Compositer != null))
+            foreach (var selectObject in _vm.SelectedRelativeObjects.Where(selectObject => selectObject.Compositer != null))
             {
                 var composite = selectObject.GetOutermostCompositer();
                 
@@ -291,10 +281,10 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void UnGroupMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(_selectedRelativeObjects.Count > 1);
-            Debug.Assert(_selectedRelativeObjects[0].Compositer != null);
+            Debug.Assert(_vm.SelectedRelativeObjects.Count > 1);
+            Debug.Assert(_vm.SelectedRelativeObjects[0].Compositer != null);
 
-            var compositer = _selectedRelativeObjects[0].GetOutermostCompositer();
+            var compositer = _vm.SelectedRelativeObjects[0].GetOutermostCompositer();
             Debug.Assert(compositer != null);
             
             foreach (var member in compositer.Members)
@@ -314,23 +304,23 @@ namespace UMLEditort
         {
             foreach (var baseObject in DiagramCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(point)))
             {
-                _endObject = baseObject;
+                _vm.EndObject = baseObject;
                 break;
             }
 
-            if (_startObjetct != null && _endObject != null)
+            if (_vm.StartObject != null && _vm.EndObject != null)
             {
-                var startPort = GetNearestPort(_startPoint, _startObjetct);
-                var endPort = GetNearestPort(_endPoint, _endObject);
+                var startPort = GetNearestPort(_vm.StartPoint, _vm.StartObject);
+                var endPort = GetNearestPort(_vm.EndPoint, _vm.EndObject);
                 var startArgs = new ConnectionArgs()
                 {
-                    TargetObject = _startObjetct,
+                    TargetObject = _vm.StartObject,
                     TargetPort = startPort
                 };
 
                 var endArgs = new ConnectionArgs()
                 {
-                    TargetObject = _endObject,
+                    TargetObject = _vm.EndObject,
                     TargetPort = endPort
                 };
                 DrawLine(startArgs, endArgs, _vm.Mode);
@@ -398,7 +388,7 @@ namespace UMLEditort
             Canvas.SetTop(connectionLine, startArgs.TargetPoint.Y + yDiff * 15);
 
             DiagramCanvas.Children.Add(connectionLine);
-            _lineFlag = false;
+            _vm.LineFlag = false;
         }
 
         /// <summary>
@@ -482,14 +472,14 @@ namespace UMLEditort
         /// <param name="point"></param>
         private void SelectModeMouseUp(Point point)
         {
-            var displacementX = _startPoint.X - point.X;
-            var displacementY = _startPoint.Y - point.Y;
+            var displacementX = _vm.StartPoint.X - point.X;
+            var displacementY = _vm.StartPoint.Y - point.Y;
 
             if (Math.Abs(displacementX) < 1 && Math.Abs(displacementY) < 1)
             {       
                 // 不做事，但仍要執行下方的選單啟用狀態檢查
             }            
-            else if (_selectedRelativeObjects.Count == 0)
+            else if (_vm.SelectedRelativeObjects.Count == 0)
             {
                 // 選取範圍模式
                 SelectAreaAction(point);
@@ -513,16 +503,16 @@ namespace UMLEditort
             var ungroupFlag = false;
 
             // 
-            if (_selectedRelativeObjects.Count > 1)
+            if (_vm.SelectedRelativeObjects.Count > 1)
             {
                 var isSame = false;
 
                 // 取得作為標準 Compositer
-                var compositer = _selectedRelativeObjects[0].GetOutermostCompositer();
+                var compositer = _vm.SelectedRelativeObjects[0].GetOutermostCompositer();
 
                 if (compositer != null)
                 {
-                    foreach (var selectedObject in _selectedRelativeObjects)
+                    foreach (var selectedObject in _vm.SelectedRelativeObjects)
                     {
                         isSame = compositer.Equals(selectedObject.GetOutermostCompositer());
                         if (!isSame)
@@ -546,10 +536,10 @@ namespace UMLEditort
         /// <param name="point"></param>
         private void SelectAreaAction(Point point)
         {
-            var width = point.X - _startPoint.X;
-            var height = point.Y - _startPoint.Y;
-            var x = width > 0 ? _startPoint.X : point.Y;
-            var y = height > 0 ? _startPoint.Y : point.Y;
+            var width = point.X - _vm.StartPoint.X;
+            var height = point.Y - _vm.StartPoint.Y;
+            var x = width > 0 ? _vm.StartPoint.X : point.Y;
+            var y = height > 0 ? _vm.StartPoint.Y : point.Y;
             var rectPoint = new Point(x, y);
             var rectSize = new Size(Math.Abs(width), Math.Abs(height));
             var selectedArea = new Rect(rectPoint, rectSize);
@@ -562,13 +552,13 @@ namespace UMLEditort
                 {
                     if (baseObject.Compositer == null)
                     {
-                        _selectedRelativeObjects.Add(baseObject);
+                        _vm.SelectedRelativeObjects.Add(baseObject);
                         baseObject.Selected = true;
                     }
                     else
                     {
                         baseObject.Compositer.Selected = true;
-                        _selectedRelativeObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
+                        _vm.SelectedRelativeObjects.AddRange(baseObject.Compositer.GetAllBaseObjects());
                     }
 
                 }
@@ -582,7 +572,7 @@ namespace UMLEditort
         /// <param name="displacementY"></param>
         private void MoveAction(double displacementX, double displacementY)
         {
-            foreach (var selectedObject in _selectedRelativeObjects)
+            foreach (var selectedObject in _vm.SelectedRelativeObjects)
             {
                 var userControl = selectedObject as UserControl;
                 var baseObject = selectedObject as BaseObject;
@@ -622,10 +612,10 @@ namespace UMLEditort
         /// <param name="e"></param>
         private void ChangeObjectName_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(_selectedObject != null);
-            Debug.Assert(_selectedObject is BaseObject);
+            Debug.Assert(_vm.SelectedObject != null);
+            Debug.Assert(_vm.SelectedObject is BaseObject);
 
-            var baseObject = (BaseObject) _selectedObject;
+            var baseObject = (BaseObject)_vm.SelectedObject;
 
             var dialog = new RenameDialog()
             {

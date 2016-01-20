@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Media;
+using UMLEditort.Entities;
 
 namespace UMLEditort
 {
@@ -52,10 +55,15 @@ namespace UMLEditort
         public SolidColorBrush UseCaseBtnBackColor => Mode == Modes.UseCase ? Brushes.Black : Brushes.White;
         public SolidColorBrush UseCaseBtnForeColor => Mode == Modes.UseCase ? Brushes.White : Brushes.Black;
 
-        public bool GroupMeniItemIsEnalbed
-        {
-            get { return true; }
-        }
+        public Point StartPoint { get; set; }
+        public Point EndPoint { get; set; }
+        public BaseObject StartObject { get; set; }
+        public BaseObject EndObject { get; set; }
+        public ISelectableObject SelectedObject { get; set; }
+        public List<ISelectableObject> SelectedRelativeObject { get; set; }
+        public bool PressingFlag { get; set; }
+        public bool LineFlag { get; set; }
+        public int ObjectCounter { get; set; }
 
         /// <summary>
         /// 用來做 Binding 
