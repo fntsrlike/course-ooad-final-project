@@ -35,9 +35,9 @@ namespace UMLEditort.Entities
 
         public List<ISelectableObject> Members { get; }
 
-        public List<ISelectableObject> GetAllBaseObjects()
+        public List<BaseObject> GetAllBaseObjects()
         {
-            var list = new List<ISelectableObject>();
+            var list = new List<BaseObject>();
 
             foreach (var member in Members)
             {
@@ -48,9 +48,9 @@ namespace UMLEditort.Entities
 
                     list.AddRange(subList);
                 }
-                else
+                else if (member is BaseObject)
                 {
-                    list.Add(member);
+                    list.Add( (BaseObject) member);
                 }
             }
             return list;

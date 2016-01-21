@@ -14,10 +14,9 @@ namespace UMLEditort.Entities
         {
             InitializeComponent();
             ArrowEndpointHeight = 0;
-
-            ArrowLine.X1 = ArrowEndpointHeight;
-            ArrowLine.X2 = LineLenght;
-            ArrowCanvas.RenderTransform = new RotateTransform(Angle);
+            TheArrowLine = ArrowLine;
+            TheArrowCanvas = ArrowCanvas;
+            Update();
         }
     }
 }

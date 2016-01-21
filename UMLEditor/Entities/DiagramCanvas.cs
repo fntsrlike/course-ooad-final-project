@@ -20,7 +20,7 @@ namespace UMLEditort.Entities
         public DiagramCanvas()
         {
             Background = Brushes.RoyalBlue;
-            SelectedRelativeObjects = new ObservableCollection<ISelectableObject>();
+            SelectedRelativeObjects = new ObservableCollection<BaseObject>();
             ObjectCounter = 0;
             MouseDown += DiagramCanvas_MouseDown;
             MouseUp += DiagramCanvas_MouseUp;
@@ -36,7 +36,8 @@ namespace UMLEditort.Entities
         public Point EndPoint { get; set; }
         public BaseObject StartObject { get; set; }
         public BaseObject EndObject { get; set; }
-        public ObservableCollection<ISelectableObject> SelectedRelativeObjects { get; set; }
+        public ObservableCollection<BaseObject> SelectedRelativeObjects { get; set; }
+
         public ISelectableObject SelectedObject
         {
             get { return _selectedObject; }

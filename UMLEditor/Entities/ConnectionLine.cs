@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using UMLEditort.Args;
 
 namespace UMLEditort.Entities
@@ -11,24 +13,33 @@ namespace UMLEditort.Entities
         {
             StartConnectionArgs = startConnectionArgs;
             EndConnectionArgs = endConnectionArgs;
-            StartPort = StartConnectionArgs.TargetPoint;
-            EndPort = EndConnectionArgs.TargetPoint;
-            Update();
         }
 
+        protected Line TheArrowLine;
+        protected Canvas TheArrowCanvas;
+        
         public void Update()
         {
+            StartPort = StartConnectionArgs.TargetPoint;
+            EndPort = EndConnectionArgs.TargetPoint;
             Draw();
         }
 
-        private void Draw()
+        protected void Draw()
         {
+            TheArrowLine.X1 = ArrowEndpointHeight;
+            TheArrowLine.X2 = LineLenght;
+            TheArrowCanvas.RenderTransform = new RotateTransform(Angle);
+            ResetLocation();
+        }
 
+        private void ResetLocation()
+        {
             var angle = Angle % 360 + 360;
             var d = (long)angle / 90;
 
-            var xDiff = 0.0;
-            var yDiff = 0.0;
+            var xOffSet = 0.0;
+            var yOffSet = 0.0;
 
             d = d % 4;
             var e = Math.Abs(angle % 90) / 90;
@@ -36,28 +47,28 @@ namespace UMLEditort.Entities
             switch (d)
             {
                 case 0:
-                    xDiff = e;
-                    yDiff = e - 1;
+                    xOffSet = e;
+                    yOffSet = e - 1;
                     break;
 
                 case 1:
-                    xDiff = 1 - e;
-                    yDiff = e;
+                    xOffSet = 1 - e;
+                    yOffSet = e;
                     break;
 
                 case 2:
-                    xDiff = -e;
-                    yDiff = 1 - e;
+                    xOffSet = -e;
+                    yOffSet = 1 - e;
                     break;
 
                 case 3:
-                    xDiff = e - 1;
-                    yDiff = -e;
+                    xOffSet = e - 1;
+                    yOffSet = -e;
                     break;
             }
 
-            Canvas.SetLeft(this, StartConnectionArgs.TargetPoint.X + xDiff * 15);
-            Canvas.SetTop(this, StartConnectionArgs.TargetPoint.Y + yDiff * 15);
+            Canvas.SetLeft(this, StartConnectionArgs.TargetPoint.X + xOffSet * 15);
+            Canvas.SetTop(this, StartConnectionArgs.TargetPoint.Y + yOffSet * 15);
         }
 
         /// <summary>
