@@ -63,7 +63,7 @@ namespace UMLEditort.OperateModes
             else if (TheCanvas.SelectedRelativeObjects.Count == 0)
             {
                 // 選取範圍模式
-                SelectAreaAction(TheCanvas.EndPoint);
+                SelectAreaAction();
             }
             else
             {
@@ -76,12 +76,12 @@ namespace UMLEditort.OperateModes
         /// 區域選取
         /// </summary>
         /// <param name="point"></param>
-        private void SelectAreaAction(Point point)
+        private void SelectAreaAction()
         {
-            var width = point.X - TheCanvas.StartPoint.X;
-            var height = point.Y - TheCanvas.StartPoint.Y;
-            var x = width > 0 ? TheCanvas.StartPoint.X : point.Y;
-            var y = height > 0 ? TheCanvas.StartPoint.Y : point.Y;
+            var width = TheCanvas.EndPoint.X - TheCanvas.StartPoint.X;
+            var height = TheCanvas.EndPoint.Y - TheCanvas.StartPoint.Y;
+            var x = width > 0 ? TheCanvas.StartPoint.X : TheCanvas.EndPoint.X;
+            var y = height > 0 ? TheCanvas.StartPoint.Y : TheCanvas.EndPoint.Y;
             var rectPoint = new Point(x, y);
             var rectSize = new Size(Math.Abs(width), Math.Abs(height));
             var selectedArea = new Rect(rectPoint, rectSize);
