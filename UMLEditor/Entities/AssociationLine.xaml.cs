@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Media;
-using UMLEditort.Args;
+﻿using UMLEditort.Args;
 
 namespace UMLEditort.Entities
 {

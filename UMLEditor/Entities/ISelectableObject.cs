@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace UMLEditort.Entities
+﻿namespace UMLEditort.Entities
 {
     public interface ISelectableObject
     {

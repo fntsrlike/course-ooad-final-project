@@ -1,5 +1,4 @@
-﻿using System.Windows.Controls;
-using UMLEditort.Args;
+﻿using UMLEditort.Args;
 using UMLEditort.Entities;
 
 namespace UMLEditort.OperateModes
@@ -8,7 +7,6 @@ namespace UMLEditort.OperateModes
     {
         public AssociationLineMode(DiagramCanvas canvas) : base(canvas)
         {
-            
         }
 
         protected override ConnectionLine GetLine(ConnectionArgs startArgs, ConnectionArgs endArgs)

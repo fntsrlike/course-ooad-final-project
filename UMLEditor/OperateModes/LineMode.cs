@@ -1,16 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Controls;
+﻿using System.Linq;
 using UMLEditort.Args;
 using UMLEditort.Entities;
 
 namespace UMLEditort.OperateModes
 {
+    /// <summary>
+    /// 作為關係線模式的基礎，需要時做不同的關係線就只需繼承這個模式然後覆寫 GetLine() 方法即可
+    /// </summary>
     public abstract class LineMode : BaseMode
     {
         protected LineMode(DiagramCanvas canvas) : base(canvas)
         {
-
         }
 
         public sealed override void MouseDown()

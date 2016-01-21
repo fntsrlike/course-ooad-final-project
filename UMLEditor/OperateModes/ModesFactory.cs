@@ -3,6 +3,9 @@ using UMLEditort.Entities;
 
 namespace UMLEditort.OperateModes
 {
+    /// <summary>
+    /// 幫忙建立各種模式的物件，並且幫忙 Keep 住，而不需要重複建立
+    /// </summary>
     class ModesFactory
     {
         private readonly Hashtable _modes; 

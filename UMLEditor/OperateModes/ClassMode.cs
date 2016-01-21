@@ -7,7 +7,6 @@ namespace UMLEditort.OperateModes
     {
         public ClassMode(DiagramCanvas canvas) : base(canvas)
         {
-            
         }              
 
         public override void MouseDown()
@@ -32,7 +31,7 @@ namespace UMLEditort.OperateModes
 
         public override void MouseUp()
         {
-            
+            // This mode do nothing
         }
     }
 }

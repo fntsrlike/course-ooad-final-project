@@ -12,7 +12,6 @@ namespace UMLEditort.OperateModes
     {
         public SelectMode(DiagramCanvas canvas) : base(canvas)
         {
-
         }
 
         public override void MouseDown()
@@ -85,24 +84,19 @@ namespace UMLEditort.OperateModes
             var rectSize = new Size(Math.Abs(width), Math.Abs(height));
             var selectedArea = new Rect(rectPoint, rectSize);
 
-            foreach (var baseObject in TheCanvas.ExistBaseObjects)
+            foreach (var baseObject in from baseObject in TheCanvas.ExistBaseObjects let rect = baseObject.GetRect() where selectedArea.Contains(rect) select baseObject)
             {
-                var rect = baseObject.GetRect();
-
-                if (selectedArea.Contains(rect))
+                if (baseObject.Compositer == null)
                 {
-                    if (baseObject.Compositer == null)
+                    TheCanvas.SelectedRelativeObjects.Add(baseObject);
+                    baseObject.Selected = true;
+                }
+                else
+                {
+                    baseObject.Compositer.Selected = true;
+                    foreach (var o in baseObject.Compositer.GetAllBaseObjects())
                     {
-                        TheCanvas.SelectedRelativeObjects.Add(baseObject);
-                        baseObject.Selected = true;
-                    }
-                    else
-                    {
-                        baseObject.Compositer.Selected = true;
-                        foreach (var o in baseObject.Compositer.GetAllBaseObjects())
-                        {
-                            TheCanvas.SelectedRelativeObjects.Add(o);
-                        }
+                        TheCanvas.SelectedRelativeObjects.Add(o);
                     }
                 }
             }

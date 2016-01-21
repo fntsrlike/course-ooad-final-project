@@ -6,7 +6,7 @@ namespace UMLEditort.OperateModes
     {
         protected DiagramCanvas TheCanvas;
 
-        public BaseMode(DiagramCanvas canvas)
+        protected BaseMode(DiagramCanvas canvas)
         {
             TheCanvas = canvas;
         }
