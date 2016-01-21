@@ -3,7 +3,7 @@
     /// <summary>
     /// 目前的使用者操作的模式
     /// </summary>
-    internal enum Modes
+    public enum Modes
     {
         Undefined,
         Select,

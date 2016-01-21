@@ -80,6 +80,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Args\ConnectionArgs.cs" />
+    <Compile Include="OperateModes\AssociationLineMode.cs" />
+    <Compile Include="OperateModes\BaseMode.cs" />
     <Compile Include="Dialogs\RenameDialog.xaml.cs">
       <DependentUpon>RenameDialog.xaml</DependentUpon>
     </Compile>
@@ -103,6 +105,13 @@
     <Compile Include="Entities\UseCaseObject.xaml.cs">
       <DependentUpon>UseCaseObject.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OperateModes\ClassMode.cs" />
+    <Compile Include="OperateModes\CompositionLineMode.cs" />
+    <Compile Include="OperateModes\GenerizationLineMode.cs" />
+    <Compile Include="OperateModes\LineMode.cs" />
+    <Compile Include="OperateModes\ModesFactory.cs" />
+    <Compile Include="OperateModes\SelectMode.cs" />
+    <Compile Include="OperateModes\UseCaseMode.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="Dialogs\RenameDialog.xaml">
       <SubType>Designer</SubType>
