@@ -15,7 +15,7 @@ namespace UMLEditort.OperateModes
 
         public sealed override void MouseDown()
         {
-            foreach (var baseObject in TheCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(TheCanvas.StartPoint)))
+            foreach (var baseObject in TheCanvas.ExistBaseObjects.Select(child => child).Where(baseObject => baseObject.IsContainPoint(TheCanvas.StartPoint)))
             {
                 TheCanvas.IsLineModeDragging = true;
                 TheCanvas.StartObject = baseObject;
@@ -25,7 +25,7 @@ namespace UMLEditort.OperateModes
 
         public sealed override void MouseUp()
         {
-            foreach (var baseObject in TheCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(TheCanvas.EndPoint)))
+            foreach (var baseObject in TheCanvas.ExistBaseObjects.Select(child => child).Where(baseObject => baseObject.IsContainPoint(TheCanvas.EndPoint)))
             {
                 TheCanvas.EndObject = baseObject;
                 break;
@@ -52,7 +52,7 @@ namespace UMLEditort.OperateModes
 
             var connectionLine = GetLine(startArgs, endArgs);
 
-            TheCanvas.Children.Add(connectionLine);
+            TheCanvas.ExistLines.Add(connectionLine);
             TheCanvas.IsLineModeDragging = false;
         }
         

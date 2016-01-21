@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -15,16 +16,20 @@ namespace UMLEditort.Entities
         public delegate void SelectedObjectChangedDelegate();
         public SelectedObjectChangedDelegate SelectedObjectChanged;
         private ISelectableObject _selectedObject;
-        private ModesFactory _modesFactory;
+        private readonly ModesFactory _modesFactory;
 
         public DiagramCanvas()
         {
+            ObjectCounter = 0;
             Background = Brushes.RoyalBlue;
             SelectedRelativeObjects = new ObservableCollection<BaseObject>();
-            ObjectCounter = 0;
+            ExistBaseObjects = new ObservableCollection<BaseObject>();
+            ExistLines = new ObservableCollection<ConnectionLine>();
+            _modesFactory = new ModesFactory(this);
+            ExistBaseObjects.CollectionChanged += ExistChanged;
+            ExistLines.CollectionChanged += ExistChanged;
             MouseDown += DiagramCanvas_MouseDown;
             MouseUp += DiagramCanvas_MouseUp;
-            _modesFactory = new ModesFactory(this);
         }
 
         // 基本屬性
@@ -36,7 +41,9 @@ namespace UMLEditort.Entities
         public Point EndPoint { get; set; }
         public BaseObject StartObject { get; set; }
         public BaseObject EndObject { get; set; }
-        public ObservableCollection<BaseObject> SelectedRelativeObjects { get; set; }
+        public ObservableCollection<BaseObject> SelectedRelativeObjects { get; }
+        public ObservableCollection<BaseObject> ExistBaseObjects { get; }
+        public ObservableCollection<ConnectionLine> ExistLines { get; }
 
         public ISelectableObject SelectedObject
         {
@@ -188,6 +195,29 @@ namespace UMLEditort.Entities
             var xDiff = aPoint.X - bPoint.X;
             var yDiff = aPoint.Y - bPoint.Y;
             return Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+        }
+
+        /// <summary>
+        /// 選取的 BaseObjects 發生改變
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExistChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    Children.Add((UserControl) item);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    Children.Remove((UserControl)item);
+                }
+            }            
         }
     }
 }

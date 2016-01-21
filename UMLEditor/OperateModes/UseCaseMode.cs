@@ -24,7 +24,7 @@ namespace UMLEditort.OperateModes
             Canvas.SetTop(baseObject, TheCanvas.StartPoint.Y);
 
             baseObject.StartPoint = TheCanvas.StartPoint;
-            TheCanvas.Children.Add(baseObject);
+            TheCanvas.ExistBaseObjects.Add(baseObject);
             TheCanvas.SelectedObject = baseObject;
             TheCanvas.SelectedRelativeObjects.Add(baseObject);
             TheCanvas.ObjectCounter++;

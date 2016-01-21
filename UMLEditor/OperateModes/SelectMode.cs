@@ -20,7 +20,7 @@ namespace UMLEditort.OperateModes
             TheCanvas.IsSelectModeDragging = true;
 
             // Move Action
-            if (TheCanvas.SelectedRelativeObjects.Select(selectedObject => selectedObject as BaseObject).Any(baseObject => baseObject.IsContainPoint(TheCanvas.StartPoint)))
+            if (TheCanvas.SelectedRelativeObjects.Select(selectedObject => selectedObject).Any(baseObject => baseObject.IsContainPoint(TheCanvas.StartPoint)))
             {
                 return;
             }
@@ -28,7 +28,7 @@ namespace UMLEditort.OperateModes
             TheCanvas.CleanSelectedObjects();
 
             // Select
-            foreach (var baseObject in TheCanvas.Children.OfType<BaseObject>().Select(child => child).Where(baseObject => baseObject.IsContainPoint(TheCanvas.StartPoint)))
+            foreach (var baseObject in TheCanvas.ExistBaseObjects.Select(child => child).Where(baseObject => baseObject.IsContainPoint(TheCanvas.StartPoint)))
             {
                 TheCanvas.SelectedObject = baseObject;
 
@@ -75,7 +75,6 @@ namespace UMLEditort.OperateModes
         /// <summary>
         /// 區域選取
         /// </summary>
-        /// <param name="point"></param>
         private void SelectAreaAction()
         {
             var width = TheCanvas.EndPoint.X - TheCanvas.StartPoint.X;
@@ -86,7 +85,7 @@ namespace UMLEditort.OperateModes
             var rectSize = new Size(Math.Abs(width), Math.Abs(height));
             var selectedArea = new Rect(rectPoint, rectSize);
 
-            foreach (var baseObject in TheCanvas.Children.OfType<BaseObject>())
+            foreach (var baseObject in TheCanvas.ExistBaseObjects)
             {
                 var rect = baseObject.GetRect();
 
@@ -118,21 +117,16 @@ namespace UMLEditort.OperateModes
         {
             foreach (var selectedObject in TheCanvas.SelectedRelativeObjects)
             {
-                var userControl = selectedObject as UserControl;
-                var baseObject = selectedObject as BaseObject;
-                Debug.Assert(userControl != null);
+                var baseObject = selectedObject;
                 Debug.Assert(baseObject != null);
-
 
                 var newStartPoint = new Point(baseObject.StartPoint.X - displacementX, baseObject.StartPoint.Y - displacementY);
                 baseObject.StartPoint = newStartPoint;
-                Canvas.SetLeft(userControl, newStartPoint.X);
-                Canvas.SetTop(userControl, newStartPoint.Y);
-                TheCanvas.Children.Remove(userControl);
-                TheCanvas.Children.Add(userControl);
+                Canvas.SetLeft(baseObject, newStartPoint.X);
+                Canvas.SetTop(baseObject, newStartPoint.Y);
 
                 var lines = new List<ConnectionLine>();
-                lines.AddRange(TheCanvas.Children.OfType<ConnectionLine>().ToList());
+                lines.AddRange(TheCanvas.ExistLines.ToList());
 
                 foreach (var line in lines.Where(line => line.StartConnectionArgs.TargetObject.Equals(selectedObject) || line.EndConnectionArgs.TargetObject.Equals(selectedObject)))
                 {
