@@ -107,7 +107,6 @@ namespace UMLEditort
         private void ChangeObjectName_Click(object sender, RoutedEventArgs e)
         {
             Debug.Assert(_vm.DiagramCanvas.SelectedObject != null);
-            Debug.Assert(_vm.DiagramCanvas.SelectedObject is BaseObject);
 
             var baseObject = (BaseObject)_vm.DiagramCanvas.SelectedObject;
 

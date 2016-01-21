@@ -63,7 +63,7 @@ namespace UMLEditort.Entities
         {
             Debug.Assert(SelectedRelativeObjects.Count > 1);
             var baseObjectWithoutGroup = SelectedRelativeObjects.Where(selectObject => selectObject.Compositer == null).ToList();
-            var compositeObjects = new List<ISelectableObject>();
+            var compositeObjects = new List<CompositeObject>();
 
             foreach (var selectObject in SelectedRelativeObjects.Where(selectObject => selectObject.Compositer != null))
             {
@@ -74,12 +74,8 @@ namespace UMLEditort.Entities
                     compositeObjects.Add(composite);
                 }
             }
-
-            var members = new List<ISelectableObject>();
-            members.AddRange(baseObjectWithoutGroup);
-            members.AddRange(compositeObjects);
-
-            var newCompositeObject = new CompositeObject(members);
+            
+            var newCompositeObject = new CompositeObject(baseObjectWithoutGroup, compositeObjects);
 
             foreach (var baseObject in baseObjectWithoutGroup)
             {
@@ -105,10 +101,7 @@ namespace UMLEditort.Entities
             var compositer = SelectedRelativeObjects[0].GetOutermostCompositer();
             Debug.Assert(compositer != null);
 
-            foreach (var member in compositer.Members)
-            {
-                member.Compositer = null;
-            }
+            compositer.ClearComposite();
         }
         
         /// <summary>

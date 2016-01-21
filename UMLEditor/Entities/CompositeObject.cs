@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Shapes;
@@ -9,10 +10,10 @@ namespace UMLEditort.Entities
     {
         private bool _selected;
 
-        public CompositeObject(List<ISelectableObject> members)
+        public CompositeObject(List<BaseObject> baseObjectWithoutGroup, List<CompositeObject> compositeObjects)
         {
-            Members = new List<ISelectableObject>();
-            Members.AddRange(members);
+            BaseObjectMembers = baseObjectWithoutGroup;
+            CompositeObjectMembers = compositeObjects;
         }
         
         public bool Selected
@@ -20,7 +21,6 @@ namespace UMLEditort.Entities
             get
             {
                 return _selected;
-                
             }
             set
             {
@@ -33,26 +33,28 @@ namespace UMLEditort.Entities
         }
         public CompositeObject Compositer { get; set; }
 
-        public List<ISelectableObject> Members { get; }
+        public List<ISelectableObject> Members
+        {
+            get
+            {
+                var members = new List<ISelectableObject>();
+                members.AddRange(BaseObjectMembers);
+                members.AddRange(CompositeObjectMembers);
+                return members;
+            }
+        } 
+        public List<BaseObject> BaseObjectMembers { get; }
+        public List<CompositeObject> CompositeObjectMembers { get; }
 
         public List<BaseObject> GetAllBaseObjects()
         {
-            var list = new List<BaseObject>();
+            var list = BaseObjectMembers.ToList();
 
-            foreach (var member in Members)
+            foreach (var subList in CompositeObjectMembers.Select(compositeObject => compositeObject.GetAllBaseObjects()))
             {
-                if (member is CompositeObject)
-                {
-                    var compositeObject = member as CompositeObject;
-                    var subList = compositeObject.GetAllBaseObjects();
-
-                    list.AddRange(subList);
-                }
-                else if (member is BaseObject)
-                {
-                    list.Add( (BaseObject) member);
-                }
+                list.AddRange(subList);
             }
+
             return list;
         }
 
@@ -64,6 +66,14 @@ namespace UMLEditort.Entities
                 compositer = compositer.Compositer;
             }
             return compositer;
+        }
+
+        public void ClearComposite()
+        {
+            foreach (var member in Members)
+            {
+                member.Compositer = null;
+            }
         }
     }
 }
